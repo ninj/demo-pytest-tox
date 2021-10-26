@@ -2,8 +2,10 @@
 
 - Based on https://joecmarshall.com/posts/python-app-seed/
 - For pip-tools: https://github.com/jazzband/pip-tools
-- For using pyenv with tox to supply python versions: https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
-- For maintaining pyenv with brew python versions: https://stackoverflow.com/questions/30499795/how-can-i-make-homebrews-python-and-pyenv-live-together
+- For using pyenv with tox to supply python
+  versions: https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
+- For maintaining pyenv with brew python
+  versions: https://stackoverflow.com/questions/30499795/how-can-i-make-homebrews-python-and-pyenv-live-together
 
 ## directory structure
 
@@ -15,11 +17,13 @@
 ## construction
 
 - created venv with intellij for python3.7 and activated it.
-- I eventually want to use tox for testing with multiple python versions, so starting with tox from https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
+- I eventually want to use tox for testing with multiple python versions, so starting with tox
+  from https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
 - hmm, already have venv directly from brew without pyenv.
 - installing tox into venv: `pip install tox`
 - forgot to update pip, so: `pip install --upgrade pip`
 - trying echo tox.ini without setup.py
+
 ```text
 [tox]
 envlist = py37, py38
@@ -28,7 +32,9 @@ envlist = py37, py38
 allowlist_externals = echo
 commands = echo "success"
 ```
+
 - running tox
+
 ```text
 (venv) ghost:demo-pytest-tox ninj$ tox
 ERROR: No pyproject.toml or setup.py file found. The expected locations are:
@@ -40,7 +46,9 @@ You can
      https://tox.readthedocs.io/en/latest/example/general.html
   3. Configure tox to use an isolated_build
 ```
+
 - ok, switch to original python-app-seed tutorial because it has setup.py for an empty project.
+
 ```text
 (venv) ghost:demo-pytest-tox ninj$ tox
 GLOB sdist-make: /Users/ninj/src/demo-pytest-tox/setup.py
@@ -61,8 +69,10 @@ error: package directory 'src' does not exist
 ======================================================================================== log end =========================================================================================
 ERROR: FAIL could not package project - v = InvocationError('/Users/ninj/src/demo-pytest-tox/venv/bin/python setup.py sdist --formats=zip --dist-dir /Users/ninj/src/demo-pytest-tox/.tox/dist', 1)
 ```
+
 - ok, let's make src directory: `mkdir src`
 - tox appears to run this time, but doesn't like not finding python3.8
+
 ```text
 (venv) ghost:demo-pytest-tox ninj$ tox
 GLOB sdist-make: /Users/ninj/src/demo-pytest-tox/setup.py
@@ -95,7 +105,9 @@ ________________________________________________________________________________
 ERROR:   py37: InvocationError for command /Users/ninj/src/demo-pytest-tox/.tox/py37/bin/python -m pip install --exists-action w .tox/.tmp/package/1/demo-pytest-tox-0.1.zip (exited with code 1)
 ERROR:  py38: InterpreterNotFound: python3.8
 ```
+
 - think that hadn't restarted shell after fiddling with pyenv setup, so restart shell and run tox again:
+
 ```text
 (venv) ghost:demo-pytest-tox ninj$ tox
 GLOB sdist-make: /Users/ninj/src/demo-pytest-tox/setup.py
@@ -148,4 +160,36 @@ ________________________________________________________________________________
 ERROR:   py37: InvocationError for command /Users/ninj/src/demo-pytest-tox/.tox/py37/bin/python -m pip install --no-deps -U .tox/.tmp/package/1/demo-pytest-tox-0.1.zip (exited with code 1)
 ERROR:   py38: InvocationError for command /Users/ninj/src/demo-pytest-tox/.tox/py38/bin/python -m pip install --exists-action w .tox/.tmp/package/1/demo-pytest-tox-0.1.zip (exited with code 1)
 ```
-- looks like it found python 3.8, but didn't like setup.py.
+
+- looks like it found python 3.8, but didn't like setup.py because no packaged code?
+- oops, tutorial does say to create an app.py before creating setup.py.
+
+```text
+print("Hello World!")
+```
+
+- tox works this time.
+
+```text
+(venv) ghost:demo-pytest-tox ninj$ tox
+GLOB sdist-make: /Users/ninj/src/demo-pytest-tox/setup.py
+py37 inst-nodeps: /Users/ninj/src/demo-pytest-tox/.tox/.tmp/package/1/demo-pytest-tox-0.1.zip
+py37 installed: demo-pytest-tox @ file:///Users/ninj/src/demo-pytest-tox/.tox/.tmp/package/1/demo-pytest-tox-0.1.zip
+py37 run-test-pre: PYTHONHASHSEED='2540272216'
+py37 run-test: commands[0] | echo success
+success
+py38 inst-nodeps: /Users/ninj/src/demo-pytest-tox/.tox/.tmp/package/1/demo-pytest-tox-0.1.zip
+py38 installed: demo-pytest-tox @ file:///Users/ninj/src/demo-pytest-tox/.tox/.tmp/package/1/demo-pytest-tox-0.1.zip
+py38 run-test-pre: PYTHONHASHSEED='2540272216'
+py38 run-test: commands[0] | echo success
+success
+________________________________________________________________________________________ summary _________________________________________________________________________________________
+  py37: commands succeeded
+  py38: commands succeeded
+  congratulations :)
+```
+
+- think it looks like tox uses python<tox env ver> binary from whatever is in path (which makes sense, as you would
+  expect to just pick up the shell environment.)
+- this means it is finding python3.7 from the venv (as that is what it was created with), and python3.8 from whatever the pyenv shim says is available.
+- I guess this means we don't need pyenv, just need a PATH that can find the python binaries we require.
