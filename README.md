@@ -1,6 +1,7 @@
 # demo-pytest-tox
 
 - Based on https://joecmarshall.com/posts/python-app-seed/
+  - this demo will concentrate on building and producing a dist for a python **app**
 - For pip-tools: https://github.com/jazzband/pip-tools
 - For using pyenv with tox to supply python
   versions: https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
@@ -15,6 +16,8 @@
 - `venv/` - created by IntelliJ, it won't create a python virtual env at top-level because directory not empty.
 
 ## construction
+
+### get tox going inside venv
 
 - created venv with intellij for python3.7 and activated it.
 - I eventually want to use tox for testing with multiple python versions, so starting with tox
@@ -193,3 +196,136 @@ ________________________________________________________________________________
   expect to just pick up the shell environment.)
 - this means it is finding python3.7 from the venv (as that is what it was created with), and python3.8 from whatever the pyenv shim says is available.
 - I guess this means we don't need pyenv, just need a PATH that can find the python binaries we require.
+- **Don't think we need to worry about which venv tox initially installed in, as it creates the venvs used to run tests.**
+
+### does tox understand setup.cfg instead of setup.py?
+
+- setup.cfg is supposed to be more secure than setup.py (as py files require execution.)
+- https://github.com/asottile/setup-py-upgrade
+- https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
+- converted setup.py to setup.cfg:
+```text
+[metadata]
+name=demo-pytest-tox
+version=0.0.1
+
+[options]
+package_dir=src
+packages=find:
+
+[options.packages.find]
+where=src
+```
+- but tox returns this error:
+```text
+(venv) ghost:demo-pytest-tox ninj$ tox
+ERROR: No pyproject.toml or setup.py file found. The expected locations are:
+  /Users/ninj/src/demo-pytest-tox/pyproject.toml or /Users/ninj/src/demo-pytest-tox/setup.py
+You can
+  1. Create one:
+     https://tox.readthedocs.io/en/latest/example/package.html
+  2. Configure tox to avoid running sdist:
+     https://tox.readthedocs.io/en/latest/example/general.html
+  3. Configure tox to use an isolated_build
+```
+- might be worthwhile using flit as it appears to use nice defaults for building things.
+- looks like we want to use tox globally too, but we can wrap in a build script so we don't forget what to do.
+- should call tox and flit via pipx to help fix versions.
+- and have pyenv local to help make things discernable.
+- pipx was broken, ~/.local/bin/pipx pointed to a miniconda no longer on machine.
+- renamed ~/.local/bin/pipx to something else 
+- installed pipx via:
+```shell
+# pip is brew 3.10 version, as defined via pyenv global 
+pip install --user pipx
+# as per https://pypa.github.io/pipx/installation/
+python3 -m pipx ensurepath
+# that put python 3.10 into PATH, but in both .bashrc and .bash_profile.
+# only need one, so removed the entry added into .bash_profile and left .bashrc
+```
+- this created ~/.local/bin/pipx pointing at currently installed python
+
+### pipx for consistent, localised build tools
+
+- need to ensure that tox uses controlled version of flit.
+    - https://pypa.github.io/pipx/docs/
+        - PIPX_HOME for project-local pipx package files
+        - PIPX_BIN_DIR for project-local bin
+        - problem is that now we need to stop intellij picking up pipx files as src
+        - default intellij excludes `Settings | Project: ... | Project Structure | Exclude files` via: https://stackoverflow.com/a/69472044/48229
+            - *~ might work, but gets excluded from IDE. This might be annoying because you can't see if present
+            - otherwise hide in .tox, or venv?
+            - build/ gets ignored by default by IDE, though still indexed.
+    - create a pipx venv-package to house both
+    - call via build script
+    - test to see whether tox and flit will be executed from same pipx venv
+        - links point to same pipx venv
+        - so if tox uses flit via module then should share same install
+- Q: will this work while venv already active? A: seems to still work
+- potentially could make pipx self-isolation an option via an env var
+    - e.g. BUILD_PIPX_ISOLATED=1 ./build.sh ...
+    - but hard to figure out sensible default for ci and developer build.
+    - so split between build.sh and ci-build.sh?
+- .tox dir is ignored but still indexed by intellij.
+```shell
+export PIPX_HOME="$PWD/build/.pipx"
+export PIPX_BIN_DIR="$PWD/build/.pipx-bin"
+export PATH="$PATH:$PIPX_BIN_DIR"
+pipx install tox==3.24.4
+pipx inject tox --include-apps flit==3.4.0
+```
+
+### flit for project init
+
+- https://flit.readthedocs.io/en/latest/index.html
+- init:
+```text
+$ flit init
+Module name [app]: 
+Author: 
+Author email: 
+Home page: 
+Choose a license (see http://choosealicense.com/ for more info)
+1. MIT - simple and permissive
+2. Apache - explicitly grants patent rights
+3. GPL - ensures that code based on this is shared with the same terms
+4. Skip - choose a license later
+Enter 1-4: 4
+
+Written pyproject.toml; edit that file to add optional extra info.
+```
+- generated:
+```text
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "app"
+authors = []
+readme = "README.md"
+dynamic = ["version", "description"]
+```
+- tox error:
+```text
+$ tox
+ERROR: pyproject.toml file found.
+To use a PEP 517 build-backend you are required to configure tox to use an isolated_build:
+https://tox.readthedocs.io/en/latest/example/package.html
+```
+- configure tox for isolated_build: https://tox.wiki/en/latest/example/package.html#flit
+```text
+# tox.ini
+[tox]
+isolated_build = True
+```
+- tox works again
+
+### pip-tools to generate requirements files
+
+- next need tox to generate pip-tools requirements file for each python version.
+- but let's start with the tutorial and pylint to see what tox does with it.
+
+### security scan
+
+- snyk?
