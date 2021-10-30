@@ -417,3 +417,5 @@ commands =
 - invokew could do a similar thing?
 - toxw means that developers are free to use their own tox if they want, but build.sh can rely on consistent version of
   tox and developers can also choose to use it.
+- tox.ini `[testenv]deps` can be read for packages to inject into pipx tox virtualenv
+- if deps contains packages that shouldn't be installed then can move list into var in a separate section.
