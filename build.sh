@@ -6,6 +6,10 @@
 # USAGE
 #   build.sh [goal]
 #
+# PRE-REQUISITES
+#   - pipx installed outside of venv for project-local installations of tools (pip install --user pipx)
+#   - venv active, using target python version 3.7 (python3 -m venv venv && source venv/bin/activate)
+#   - other python versions available for tox to use (see .python-version file for pyenv)
 #
 # EXAMPLES
 #
