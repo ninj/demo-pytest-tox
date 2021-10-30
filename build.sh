@@ -84,6 +84,10 @@ goal_pip_compile() {
   ./toxw -e pip-compile
 }
 
+goal_pip_sync() {
+  pip-sync dev-requirements.txt
+}
+
 help() {
   in_block=
   while IFS= read -r line; do
