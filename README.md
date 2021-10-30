@@ -17,6 +17,8 @@
 
 ## construction
 
+Troubleshooting: https://note.hommalab.io/posts/python/tox-with-pip/
+
 ### get tox going inside venv
 
 - created venv with intellij for python3.7 and activated it.
@@ -426,6 +428,84 @@ commands =
       - if deps contains packages that shouldn't be installed then can move list into var in a separate section.
 - change target dir with `envdir`: https://tox.wiki/en/latest/config.html
 
+### enable pylint as per seed app
+
+- added pylint to dev-requirements.in
+- tried to tox -r -e create-env, but got a weird error as I think was already in the venv!
+- ok, managed to recreate env and ./toxw -e lint, but got error:
+```text
+(venv) ghost:demo-pytest-tox ninj$ ./toxw -e lint
+lint create: /Users/ninj/src/demo-pytest-tox/.tox/lint
+lint installdeps: pip==21.3.1, pip-tools==6.4.0, -rdev-requirements.txt
+lint installed: astroid==2.8.4,click==8.0.3,importlib-metadata==4.8.1,isort==5.9.3,lazy-object-proxy==1.6.0,mccabe==0.6.1,pep517==0.12.0,pip-tools==6.4.0,pylint==2.1.1,tomli==1.2.2,typed-ast==1.4.3,typing-extensions==3.10.0.2,wrapt==1.13.3,zipp==3.6.0
+lint run-test-pre: PYTHONHASHSEED='2505301089'
+lint run-test: commands[0] | pylint src
+************* Module app
+src/app.py:5:0: C0304: Final newline missing (missing-final-newline)
+src/app.py:5:0: C0327: Mixed line endings LF and CRLF (mixed-line-endings)
+Traceback (most recent call last):
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/bin/pylint", line 8, in <module>
+    sys.exit(run_pylint())
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/__init__.py", line 19, in run_pylint
+    Run(sys.argv[1:])
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/lint.py", line 1394, in __init__
+    linter.check(args)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/lint.py", line 801, in check
+    self._do_check(files_or_modules)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/lint.py", line 938, in _do_check
+    self.check_astroid_module(ast_node, walker, rawcheckers, tokencheckers)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/lint.py", line 1018, in check_astroid_module
+    walker.walk(ast_node)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/utils.py", line 1164, in walk
+    cb(astroid)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/checkers/imports.py", line 448, in leave_module
+    std_imports, ext_imports, loc_imports = self._check_imports_order(node)
+  File "/Users/ninj/src/demo-pytest-tox/.tox/lint/lib/python3.7/site-packages/pylint/checkers/imports.py", line 595, in _check_imports_order
+    isort_obj = isort.SortImports(
+AttributeError: module 'isort' has no attribute 'SortImports'
+ERROR: InvocationError for command /Users/ninj/src/demo-pytest-tox/.tox/lint/bin/pylint src (exited with code 1)
+________________________________________________________________________________________ summary _________________________________________________________________________________________
+ERROR:   lint: commands failed
+```
+- https://github.com/PyCQA/isort/issues/1273
+  - https://github.com/PyCQA/pylint/pull/2773
+    - https://github.com/Shopify/shopify_python/issues/114
+- need to upgrade to newer version of pylint
+- run pip-compile with --upgrade
+- also need to upgrade env for tox lint venv with ./toxw -r -e lint
+- ok now lint runs:
+```text
+(venv) ghost:demo-pytest-tox ninj$ ./toxw -r -e lint
+lint recreate: /Users/ninj/src/demo-pytest-tox/.tox/lint
+lint installdeps: pip==21.3.1, pip-tools==6.4.0, -rdev-requirements.txt
+lint installed: astroid==2.8.4,click==8.0.3,importlib-metadata==4.8.1,isort==5.9.3,lazy-object-proxy==1.6.0,mccabe==0.6.1,pep517==0.12.0,pip-tools==6.4.0,platformdirs==2.4.0,pylint==2.11.1,toml==0.10.2,tomli==1.2.2,typed-ast==1.4.3,typing-extensions==3.10.0.2,wrapt==1.13.3,zipp==3.6.0
+lint run-test-pre: PYTHONHASHSEED='4239306718'
+lint run-test: commands[0] | pylint src
+************* Module src.app
+src/app.py:5:0: C0304: Final newline missing (missing-final-newline)
+
+-----------------------------------
+Your code has been rated at 5.00/10
+
+ERROR: InvocationError for command /Users/ninj/src/demo-pytest-tox/.tox/lint/bin/pylint src (exited with code 16)
+________________________________________________________________________________________ summary _________________________________________________________________________________________
+ERROR:   lint: commands failed
+```
+- oddly if I fix pylint remembers previous result.
+```text
+(venv) ghost:demo-pytest-tox ninj$ ./toxw -e lint
+lint installed: astroid==2.8.4,click==8.0.3,importlib-metadata==4.8.1,isort==5.9.3,lazy-object-proxy==1.6.0,mccabe==0.6.1,pep517==0.12.0,pip-tools==6.4.0,platformdirs==2.4.0,pylint==2.11.1,toml==0.10.2,tomli==1.2.2,typed-ast==1.4.3,typing-extensions==3.10.0.2,wrapt==1.13.3,zipp==3.6.0
+lint run-test-pre: PYTHONHASHSEED='1746304785'
+lint run-test: commands[0] | pylint src
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 5.00/10, +5.00)
+
+________________________________________________________________________________________ summary _________________________________________________________________________________________
+  lint: commands succeeded
+  congratulations :)
+```
+- where does pylint store history?
 ### tox auto-provision local tox requirements?
 
 - requires for tox and flit?
@@ -434,3 +514,7 @@ commands =
   - also used by tox to build project
   - however, could use pipx to create pyproject.toml
   - then let tox require the version of flit it wants to depend on.
+
+### put tooling config in tox.ini or pyproject.toml
+
+- https://www.integralist.co.uk/posts/toxini/
