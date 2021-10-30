@@ -39,7 +39,6 @@ set -ueo pipefail
 declare -r SCRIPT_ORIG="$0"
 declare -r SCRIPT_NAME="${0##*/}"
 declare -r PROJECT_DIR="${0%/*}"
-declare -r TARGET_PYTHON_VERSION=3.7
 
 init() {
   cat <<__INIT__
@@ -72,7 +71,7 @@ goal_doctor() {
   cat <<__DOCTOR__
 pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
 virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './build.sh bootstrap' to create and 'source venv/bin/activate' to activate")
-python: $(v=$(python --version); [[ "${v#* }" == "$TARGET_PYTHON_VERSION".* ]] && echo "$v" || echo "$v does not match target version $TARGET_PYTHON_VERSION")
+python: $(python --version)
 __DOCTOR__
 }
 
