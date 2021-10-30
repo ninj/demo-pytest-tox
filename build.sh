@@ -71,7 +71,7 @@ goal_bootstrap() {
 goal_doctor() {
   cat <<__DOCTOR__
 pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
-virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected, try: python3 -m venv venv && source venv/bin/activate")
+virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './build.sh bootstrap' to create and 'source venv/bin/activate' to activate")
 python: $(v=$(python --version); [[ "${v#* }" == "$TARGET_PYTHON_VERSION".* ]] && echo "$v" || echo "$v does not match target version $TARGET_PYTHON_VERSION")
 __DOCTOR__
 }
