@@ -14,8 +14,8 @@
 # VERSION MANAGEMENT OF TOOLS FOR LOCAL DEVELOPMENT
 #   - build.sh itself only relies on toxw
 #   => tox version is managed in .tox/.wrapper/toxw.config
-#   - bootstrap goal will install packages into local virtualenv, read from [testenv]deps
-#   => tool versions that are installed into local development virtual environment are managed in tox.ini
+#   - bootstrap goal uses tox to create developer virtualenv
+#   => tool versions that are installed into developer virtual environment are managed in tox.ini
 #
 # EXAMPLES
 #
@@ -58,21 +58,13 @@ is_virtualenv() {
   [[ -n "${VIRTUAL_ENV}" ]]
 }
 
-read_tox_testenv_deps() {
-  python -c 'import configparser; config=configparser.ConfigParser(); config.read("tox.ini"); print(config["testenv"]["deps"])'
-}
-
 goal_bootstrap() {
   ./toxw --version >/dev/null
-  if is_virtualenv; then
-    while IFS= read -r package; do
-      if [[ -n "$package" ]]; then
-        pip install "$package"
-      fi
-    done < <(read_tox_testenv_deps)
+  if [[ -d venv ]]; then
+    echo "venv directory already present, assuming virtualenv already created."
   else
-    echo "No virtualenv detected, please activate virtualenv first."
-    return 1
+    echo "venv directory already present, creating..."
+    ./toxw -e create-venv
   fi
 }
 

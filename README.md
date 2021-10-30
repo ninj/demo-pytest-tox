@@ -417,5 +417,19 @@ commands =
 - invokew could do a similar thing?
 - toxw means that developers are free to use their own tox if they want, but build.sh can rely on consistent version of
   tox and developers can also choose to use it.
-- tox.ini `[testenv]deps` can be read for packages to inject into pipx tox virtualenv
-- if deps contains packages that shouldn't be installed then can move list into var in a separate section.
+- tox for developer virtualenv
+  - use tox to create venv 
+    - https://tox.wiki/en/latest/example/basic.html#tox-auto-provisioning
+  - use tox.ini for packages
+      - tox.ini `[testenv]deps` can be read for packages to inject into pipx tox virtualenv
+      - if deps contains packages that shouldn't be installed then can move list into var in a separate section.
+- change target dir with `envdir`: https://tox.wiki/en/latest/config.html
+
+### tox auto-provision local tox requirements?
+
+- requires for tox and flit?
+- flit is a bit special because
+  - we need it to create pyproject.toml
+  - also used by tox to build project
+  - however, could use pipx to create pyproject.toml
+  - then let tox require the version of flit it wants to depend on.
