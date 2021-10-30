@@ -4,6 +4,9 @@
 *.iml
 .idea/
 
+# note more custom entries at bottom of file
+
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -144,3 +147,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+
+### Custom Entries (to override settings above)
+
+# tox wrapper
+!.tox/.wrapper/toxw.config

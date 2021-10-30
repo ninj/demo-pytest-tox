@@ -34,15 +34,12 @@ declare -r SCRIPT_ORIG="$0"
 declare -r SCRIPT_NAME="${0##*/}"
 declare -r PROJECT_DIR="${0%/*}"
 declare -r TARGET_PYTHON_VERSION=3.7
-declare -r TOX_VERSION=3.24.4
-declare -r FLIT_VERSION=3.4.0
+declare -r PIP_VERSION=21.3.1
 declare -r PIP_TOOLS_VERSION=6.4.0
 
 init() {
   cat <<__INIT__
-export PIPX_HOME="$PROJECT_DIR/build/.pipx"
-export PIPX_BIN_DIR="$PROJECT_DIR/build/.pipx-bin"
-export PATH="$PIPX_BIN_DIR:\$PATH"
+$(TOXW_INIT=1 ./toxw)
 __INIT__
 }
 
@@ -58,9 +55,9 @@ is_virtualenv() {
 }
 
 goal_bootstrap() {
-  pipx install tox==$TOX_VERSION
-  pipx inject --include-apps tox flit==$FLIT_VERSION
+  ./toxw --version >/dev/null
   if is_virtualenv; then
+    pip install pip==$PIP_VERSION
     pip install pip-tools==$PIP_TOOLS_VERSION
   else
     echo "No virtualenv detected, please activate virtualenv first."
@@ -77,11 +74,11 @@ __DOCTOR__
 }
 
 goal_assemble() {
-  tox
+  ./toxw
 }
 
 goal_pip_compile() {
-  tox -e pip-compile
+  ./toxw -e pip-compile
 }
 
 help() {

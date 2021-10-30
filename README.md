@@ -403,11 +403,17 @@ commands =
     - fallback: print instructions
 - note that as build really relies on (project-local) tox build.sh doesn't need to rely on virtualenv.
     - so build servers don't have to worry about requiring virtualenv being active.
+- also remember tox could take care of providing invoke.
 
 ### toxw to wrap install of tox
 
 - if build.sh only really needs tox to build project (as opposed to setting up for developers, which could be a
   different goal.), then only need to worry about tox
 - ./toxw
-  - sets up project-local tox if not present (TOXW_HOME, defaults to $SCRIPT_DIR/build/.toxw)
-  - `exec tox "$@"`
+    - sets up project-local tox if not present (TOXW_HOME, defaults to $SCRIPT_DIR/.tox/.wrapper)
+        - wrapper can use pipx, or potentially fall back to installing own virtualenv (which is what tox is doing.)
+        - pip package specs (i.e. package versions for tox and other deps) in $TOXW_HOME/wrapper.config
+    - `exec tox "$@"`
+- invokew could do a similar thing?
+- toxw means that developers are free to use their own tox if they want, but build.sh can rely on consistent version of
+  tox and developers can also choose to use it.

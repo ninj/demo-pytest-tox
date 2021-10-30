@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# SUMMARY
+#   runs project-local tox for consistency
+#
+# USAGE
+#   ./toxw [tox args]
+#
+# ENVIRONMENT VARIABLES
+#   TOXW_HOME
+#     default: <SCRIPT_DIR>/.tox/.wrapper
+#     Where wrapper will install files and locate config file
+#   TOXW_CONFIG
+#     default: $TOXW_HOME/toxw.config
+#     Location of config file
+#   TOXW_FORCE_INSTALL
+#     default: empty
+#     If not empty then wrapper will run install even if local tox detected
+#   TOXW_INIT
+#     default: empty
+#     If not empty then wrapper will only print script to export variables to
+#     set up environment to execute tools installed by wrapper.
+#
+# CONFIG FILE FORMAT
+# Note: currently config file is simply source'd, so needs to conform to bash
+#   TOX_VERSION= (mandatory) tox version
+#   PIPX_INJECT= (optional) args for pipx inject tox
+#
+#
+# EXAMPLES
+#
+#   Execute project-local tox via wrapper (installing tox if not present)
+#     ./toxw --version
+#
+#   Execute tools installed by wrapper in current shell
+#     eval "$(TOXW_INIT=1 ./toxw)"
+#     tox --version
+
+declare -r DEFAULT_TOX_VERSION=3.24.4
+declare -r TOXW_HOME="${TOXW_HOME:-"${0%/*}"/.tox/.wrapper}"
+declare -r TOXW_CONFIG="${TOXW_CONFIG:-"$TOXW_HOME"/toxw.config}"
+declare -r TOXW_FORCE_INSTALL="${TOXW_FORCE_INSTALL:-}"
+declare -r TOXW_INIT="${TOXW_INIT:-}"
+
+is_wrapper_tox_installed() {
+  [[ -x "$PIPX_BIN_DIR/tox" ]]
+}
+
+is_in_path() {
+  which "$1" >/dev/null 2>&1
+}
+
+exit_with_error() {
+  echo "$@" 2>&1
+  exit 1
+}
+
+load_config() {
+  set -a
+  # shellcheck disable=SC1090
+  source "$TOXW_CONFIG"
+  set +a
+}
+
+wrapper_tox_install() {
+  if ! is_in_path pipx; then
+    exit_with_error "pipx not in path"
+  fi
+  load_config
+  pipx install tox=="${TOX_VERSION:-$DEFAULT_TOX_VERSION}"
+  if [[ -n "${PIPX_INJECT:-}" ]]; then
+    # shellcheck disable=SC2086
+    pipx inject --include-apps tox $PIPX_INJECT
+  fi
+}
+
+generate_init() {
+  load_config
+  cat <<__INIT__
+export PIPX_HOME="$TOXW_HOME/pipx"
+export PIPX_BIN_DIR="$TOXW_HOME/bin"
+export PATH="$PIPX_BIN_DIR:\$PATH"
+__INIT__
+}
+
+main() {
+  if [[ -n "$TOXW_INIT" ]]; then
+    generate_init
+    return 0
+  fi
+  eval "$(generate_init)"
+  if ! is_wrapper_tox_installed || [[ -n "$TOXW_FORCE_INSTALL" ]]; then
+    wrapper_tox_install
+  fi
+  exec tox "$@"
+}
+
+main "$@"
