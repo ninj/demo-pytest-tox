@@ -4,7 +4,7 @@
 #   Stores project build conventions
 #
 # USAGE
-#   build.sh [goal]
+#   build.sh [-?|-h|--help] [goal...]
 #
 # PRE-REQUISITES
 #   - pipx installed outside of venv for project-local installations of tools (pip install --user pipx)
@@ -22,7 +22,7 @@
 #   ./build.sh assemble
 #
 # export vars to run tools, e.g. tox:
-#   eval "$(./build.sh pipx-init)"
+#   eval "$(./build.sh init)"
 #   tox ...
 #
 # generate requirements files using pip-compile:
@@ -37,18 +37,18 @@ declare -r TOX_VERSION=3.24.4
 declare -r FLIT_VERSION=3.4.0
 declare -r PIP_TOOLS_VERSION=6.4.0
 
-pipx_init() {
-  cat <<__PIPX_INIT__
+init() {
+  cat <<__INIT__
 export PIPX_HOME="$PROJECT_DIR/build/.pipx"
 export PIPX_BIN_DIR="$PROJECT_DIR/build/.pipx-bin"
 export PATH="$PIPX_BIN_DIR:\$PATH"
-__PIPX_INIT__
+__INIT__
 }
 
-goal_pipx_init() {
+goal_init() {
   cat <<__OUTPUT__
-# run with: eval "\$($SCRIPT_ORIG pipx-init)"
-$(pipx_init)
+# run with: eval "\$($SCRIPT_ORIG init)"
+$(init)
 __OUTPUT__
 }
 
@@ -75,14 +75,36 @@ goal_pip_compile() {
   tox -e pip-compile
 }
 
+help() {
+  in_block=
+  while IFS= read -r line; do
+    if [[ "$line" == "#!"* ]]; then
+      continue
+    elif [[ "$line" == "#"* ]]; then
+      in_block=1
+    elif [[ -n "$in_block" ]]; then
+      return 0
+    fi
+    [[ -n "$in_block" ]] && printf "%s\n" "$line"
+  done < "$SCRIPT_ORIG"
+}
+
+goal_help() {
+  help
+}
+
 main() {
-  eval "$(pipx_init)"
   case "${1:-}" in
-  pipx-init)
-    goal_pipx_init
+  -\?|-h|--help)
+    help
+    exit
+    ;;
+  init)
+    goal_init
     return $?
     ;;
   esac
+  eval "$(init)"
   if (($# == 0)); then
     goals=(assemble)
   else
