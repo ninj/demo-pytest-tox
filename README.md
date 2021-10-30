@@ -371,7 +371,8 @@ pip-tools==6.4.0
       in: https://pip-tools.readthedocs.io/en/latest/#cross-environment-usage-of-requirements-in-requirements-txt-and-pip-compile
     - if issue with other python version needing different dependency version to resolved version then this should
       appear as an error.
-- so enough to use tox -e pip-compile to produce requirements files in a predictable environment:
+- so enough to use tox -e pip-compile to produce requirements files in a predictable environment.
+- helpfully if we have a requirements.txt hopefully this will be picked up by PAAS services like apprunner.
 
 ```text
 [testenv:pip-compile]
