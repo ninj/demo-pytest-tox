@@ -54,7 +54,7 @@ __OUTPUT__
 }
 
 is_virtualenv() {
-  [[ -n "${VIRTUAL_ENV}" ]]
+  [[ -n "${VIRTUAL_ENV:-}" ]]
 }
 
 goal_bootstrap() {
