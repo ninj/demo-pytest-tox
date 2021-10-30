@@ -34,8 +34,6 @@ declare -r SCRIPT_ORIG="$0"
 declare -r SCRIPT_NAME="${0##*/}"
 declare -r PROJECT_DIR="${0%/*}"
 declare -r TARGET_PYTHON_VERSION=3.7
-declare -r PIP_VERSION=21.3.1
-declare -r PIP_TOOLS_VERSION=6.4.0
 
 init() {
   cat <<__INIT__
@@ -54,11 +52,18 @@ is_virtualenv() {
   [[ -n "${VIRTUAL_ENV}" ]]
 }
 
+read_tox_testenv_deps() {
+  python -c 'import configparser; config=configparser.ConfigParser(); config.read("tox.ini"); print(config["testenv"]["deps"])'
+}
+
 goal_bootstrap() {
   ./toxw --version >/dev/null
   if is_virtualenv; then
-    pip install pip==$PIP_VERSION
-    pip install pip-tools==$PIP_TOOLS_VERSION
+    while IFS= read -r package; do
+      if [[ -n "$package" ]]; then
+        pip install "$package"
+      fi
+    done < <(read_tox_testenv_deps)
   else
     echo "No virtualenv detected, please activate virtualenv first."
     return 1
