@@ -1,7 +1,7 @@
 # demo-pytest-tox
 
 - Based on https://joecmarshall.com/posts/python-app-seed/
-  - this demo will concentrate on building and producing a dist for a python **app**
+    - this demo will concentrate on building and producing a dist for a python **app**
 - For pip-tools: https://github.com/jazzband/pip-tools
 - For using pyenv with tox to supply python
   versions: https://operatingops.com/2020/10/24/tox-testing-multiple-python-versions-with-pyenv/
@@ -194,9 +194,11 @@ ________________________________________________________________________________
 
 - think it looks like tox uses python<tox env ver> binary from whatever is in path (which makes sense, as you would
   expect to just pick up the shell environment.)
-- this means it is finding python3.7 from the venv (as that is what it was created with), and python3.8 from whatever the pyenv shim says is available.
+- this means it is finding python3.7 from the venv (as that is what it was created with), and python3.8 from whatever
+  the pyenv shim says is available.
 - I guess this means we don't need pyenv, just need a PATH that can find the python binaries we require.
-- **Don't think we need to worry about which venv tox initially installed in, as it creates the venvs used to run tests.**
+- **Don't think we need to worry about which venv tox initially installed in, as it creates the venvs used to run
+  tests.**
 
 ### does tox understand setup.cfg instead of setup.py?
 
@@ -204,6 +206,7 @@ ________________________________________________________________________________
 - https://github.com/asottile/setup-py-upgrade
 - https://setuptools.pypa.io/en/latest/userguide/declarative_config.html
 - converted setup.py to setup.cfg:
+
 ```text
 [metadata]
 name=demo-pytest-tox
@@ -216,7 +219,9 @@ packages=find:
 [options.packages.find]
 where=src
 ```
+
 - but tox returns this error:
+
 ```text
 (venv) ghost:demo-pytest-tox ninj$ tox
 ERROR: No pyproject.toml or setup.py file found. The expected locations are:
@@ -228,13 +233,15 @@ You can
      https://tox.readthedocs.io/en/latest/example/general.html
   3. Configure tox to use an isolated_build
 ```
+
 - might be worthwhile using flit as it appears to use nice defaults for building things.
 - looks like we want to use tox globally too, but we can wrap in a build script so we don't forget what to do.
 - should call tox and flit via pipx to help fix versions.
 - and have pyenv local to help make things discernable.
 - pipx was broken, ~/.local/bin/pipx pointed to a miniconda no longer on machine.
-- renamed ~/.local/bin/pipx to something else 
+- renamed ~/.local/bin/pipx to something else
 - installed pipx via:
+
 ```shell
 # pip is brew 3.10 version, as defined via pyenv global 
 pip install --user pipx
@@ -243,6 +250,7 @@ python3 -m pipx ensurepath
 # that put python 3.10 into PATH, but in both .bashrc and .bash_profile.
 # only need one, so removed the entry added into .bash_profile and left .bashrc
 ```
+
 - this created ~/.local/bin/pipx pointing at currently installed python
 
 ### pipx for consistent, localised build tools
@@ -252,7 +260,8 @@ python3 -m pipx ensurepath
         - PIPX_HOME for project-local pipx package files
         - PIPX_BIN_DIR for project-local bin
         - problem is that now we need to stop intellij picking up pipx files as src
-        - default intellij excludes `Settings | Project: ... | Project Structure | Exclude files` via: https://stackoverflow.com/a/69472044/48229
+        - default intellij excludes `Settings | Project: ... | Project Structure | Exclude files`
+          via: https://stackoverflow.com/a/69472044/48229
             - *~ might work, but gets excluded from IDE. This might be annoying because you can't see if present
             - otherwise hide in .tox, or venv?
             - build/ gets ignored by default by IDE, though still indexed.
@@ -267,6 +276,7 @@ python3 -m pipx ensurepath
     - but hard to figure out sensible default for ci and developer build.
     - so split between build.sh and ci-build.sh?
 - .tox dir is ignored but still indexed by intellij.
+
 ```shell
 export PIPX_HOME="$PWD/build/.pipx"
 export PIPX_BIN_DIR="$PWD/build/.pipx-bin"
@@ -279,6 +289,7 @@ pipx inject tox --include-apps flit==3.4.0
 
 - https://flit.readthedocs.io/en/latest/index.html
 - init:
+
 ```text
 $ flit init
 Module name [app]: 
@@ -294,7 +305,9 @@ Enter 1-4: 4
 
 Written pyproject.toml; edit that file to add optional extra info.
 ```
+
 - generated:
+
 ```text
 [build-system]
 requires = ["flit_core >=3.2,<4"]
@@ -306,26 +319,72 @@ authors = []
 readme = "README.md"
 dynamic = ["version", "description"]
 ```
+
 - tox error:
+
 ```text
 $ tox
 ERROR: pyproject.toml file found.
 To use a PEP 517 build-backend you are required to configure tox to use an isolated_build:
 https://tox.readthedocs.io/en/latest/example/package.html
 ```
+
 - configure tox for isolated_build: https://tox.wiki/en/latest/example/package.html#flit
+
 ```text
 # tox.ini
 [tox]
 isolated_build = True
 ```
+
 - tox works again
 
 ### pip-tools to generate requirements files
 
 - next need tox to generate pip-tools requirements file for each python version.
 - but let's start with the tutorial and pylint to see what tox does with it.
+- hmm, pip-tools as dev dependency?
+
+```text
+#
+# This file is autogenerated by pip-compile with python 3.7
+# To update, run:
+#
+#    pip-compile dev-requirements.in
+#
+...
+pip-tools==6.4.0
+    # via -r dev-requirements.in
+...
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools
+```
+
+- ok, don't think pip-tools as a requirement is a good idea, so install via build bootstrap into virtualenv instead.
+- producing python-version specific requirements files to commit as part of source isn't necessary for an app.
+    - as app intended to be run under a single python version.
+    - app will be distributed by pyinstaller (uber archive)
+    - or pipx or venv with sdist so also targeted at single python version.
+    - testing with multiple versions just a measure of compatibility
+    - can stick with single set of {dev-,}requirements.{in,txt} and use for different python versions, against advice
+      in: https://pip-tools.readthedocs.io/en/latest/#cross-environment-usage-of-requirements-in-requirements-txt-and-pip-compile
+    - if issue with other python version needing different dependency version to resolved version then this should
+      appear as an error.
+- so enough to use tox -e pip-compile to produce requirements files in a predictable environment:
+```text
+[testenv:pip-compile]
+basepython = python3.7
+commands =
+    pip-compile requirements.in
+    pip-compile dev-requirements.in
+# deps inherited from base testenv
+```
 
 ### security scan
 
 - snyk?
+
+## invoke.py
+
+- just wrap invoke.py with build.sh?
