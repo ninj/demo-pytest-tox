@@ -28,7 +28,7 @@ pipx_init() {
   cat <<__PIPX_INIT__
 export PIPX_HOME="$PROJECT_DIR/build/.pipx"
 export PIPX_BIN_DIR="$PROJECT_DIR/build/.pipx-bin"
-export PATH="\$PATH:$PIPX_BIN_DIR"
+export PATH="$PIPX_BIN_DIR:\$PATH"
 __PIPX_INIT__
 }
 
