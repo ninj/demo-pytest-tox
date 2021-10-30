@@ -11,17 +11,23 @@
 #   - venv active, using target python version 3.7 (python3 -m venv venv && source venv/bin/activate)
 #   - other python versions available for tox to use (see .python-version file for pyenv)
 #
-# EXAMPLES
+# VERSION MANAGEMENT OF TOOLS FOR LOCAL DEVELOPMENT
+#   - build.sh itself only relies on toxw
+#   => tox version is managed in .tox/.wrapper/toxw.config
+#   - bootstrap goal will install packages into local virtualenv, read from [testenv]deps
+#   => tool versions that are installed into local development virtual environment are managed in tox.ini
 #
-# bootstrap tooling:
-#   ./build.sh bootstrap
+# EXAMPLES
 #
 # build project:
 #   ./build.sh
 #   or
 #   ./build.sh assemble
 #
-# export vars to run tools, e.g. tox:
+# bootstrap tooling for local development:
+#   ./build.sh bootstrap
+#
+# export vars to run project-local tools, e.g. tox:
 #   eval "$(./build.sh init)"
 #   tox ...
 #
