@@ -71,7 +71,8 @@ goal_doctor() {
   cat <<__DOCTOR__
 pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
 virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './build.sh bootstrap' to create and 'source venv/bin/activate' to activate")
-python: $(python --version)
+python: $(which python)
+python version: $(python --version)
 __DOCTOR__
 }
 
@@ -119,12 +120,12 @@ main() {
     goals=("$@")
   fi
   for g in "${goals[@]}"; do
-    echo "$SCRIPT_NAME :: goal: $g ==> executing"
+    echo "$SCRIPT_NAME :: $g ==> executing"
     if "goal_${g//-/_}"; then
-      echo "$SCRIPT_NAME :: goal: $g <== done"
+      echo "$SCRIPT_NAME :: $g <== done"
     else
       local exit_code=$?
-      echo "$SCRIPT_NAME :: goal: $g <== failed with exit code: $exit_code"
+      echo "$SCRIPT_NAME :: $g <== failed with exit code: $exit_code"
       return $exit_code
     fi
   done
