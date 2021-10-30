@@ -372,6 +372,7 @@ pip-tools==6.4.0
     - if issue with other python version needing different dependency version to resolved version then this should
       appear as an error.
 - so enough to use tox -e pip-compile to produce requirements files in a predictable environment:
+
 ```text
 [testenv:pip-compile]
 basepython = python3.7
@@ -387,4 +388,26 @@ commands =
 
 ## invoke.py
 
+- https://docs.pyinvoke.org/en/stable/
 - just wrap invoke.py with build.sh?
+- actually, might make a nice level of indirection.
+    - developers working locally expected to use invoke directly.
+- https://www.pyinvoke.org/installing.html
+- still need to install invoke, so build.sh might have to:
+    - check invoke present, print suggestion to fix
+        - virtualenv install, activate
+        - invoke install
+- or just rely on pipx or already installed as invoke doesn't have dependencies.
+    - check invoke present
+    - if not, check pipx present
+    - fallback: print instructions
+- note that as build really relies on (project-local) tox build.sh doesn't need to rely on virtualenv.
+    - so build servers don't have to worry about requiring virtualenv being active.
+
+### toxw to wrap install of tox
+
+- if build.sh only really needs tox to build project (as opposed to setting up for developers, which could be a
+  different goal.), then only need to worry about tox
+- ./toxw
+  - sets up project-local tox if not present (TOXW_HOME, defaults to $SCRIPT_DIR/build/.toxw)
+  - `exec tox "$@"`

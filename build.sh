@@ -33,6 +33,7 @@ set -ueo pipefail
 declare -r SCRIPT_ORIG="$0"
 declare -r SCRIPT_NAME="${0##*/}"
 declare -r PROJECT_DIR="${0%/*}"
+declare -r TARGET_PYTHON_VERSION=3.7
 declare -r TOX_VERSION=3.24.4
 declare -r FLIT_VERSION=3.4.0
 declare -r PIP_TOOLS_VERSION=6.4.0
@@ -65,6 +66,14 @@ goal_bootstrap() {
     echo "No virtualenv detected, please activate virtualenv first."
     return 1
   fi
+}
+
+goal_doctor() {
+  cat <<__DOCTOR__
+pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
+virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected, try: python3 -m venv venv && source venv/bin/activate")
+python: $(v=$(python --version); [[ "${v#* }" == "$TARGET_PYTHON_VERSION".* ]] && echo "$v" || echo "$v does not match target version $TARGET_PYTHON_VERSION")
+__DOCTOR__
 }
 
 goal_assemble() {
