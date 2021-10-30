@@ -79,7 +79,7 @@ generate_init() {
   cat <<__INIT__
 export PIPX_HOME="$TOXW_HOME/pipx"
 export PIPX_BIN_DIR="$TOXW_HOME/bin"
-export PATH="$PIPX_BIN_DIR:\$PATH"
+export PATH="\$PIPX_BIN_DIR:\$PATH"
 __INIT__
 }
 
