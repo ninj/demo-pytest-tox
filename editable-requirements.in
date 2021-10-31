@@ -1,0 +1,3 @@
+# support '-e .' for pip-compile, as ',' gets transformed into full path by pip-compile
+# so we isolate this change from the rest of our requirements to keep them consistent.
+-e .

@@ -62,18 +62,13 @@ is_virtualenv() {
 
 goal_bootstrap() {
   ./toxw --version >/dev/null
-  if [[ -d venv ]]; then
-    echo "venv directory already present, assuming virtualenv already created."
-  else
-    echo "venv directory not found, creating virtualenv via tox..."
-    ./toxw --devenv venv -e tool
-  fi
+  ./bootstrap.sh
 }
 
 goal_doctor() {
   cat <<__DOCTOR__
 pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
-virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './build.sh bootstrap' to create and 'source venv/bin/activate' to activate")
+virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './bootstrap.sh' to create and 'source venv/bin/activate' to activate")
 python: $(which python)
 python version: $(python --version)
 __DOCTOR__

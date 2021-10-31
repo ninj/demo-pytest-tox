@@ -4,6 +4,9 @@
 *.iml
 .idea/
 
+# location-specific requirements file
+editable-requirements.txt
+
 # note more custom entries at bottom of file
 
 
