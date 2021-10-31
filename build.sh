@@ -62,8 +62,8 @@ goal_bootstrap() {
   if [[ -d venv ]]; then
     echo "venv directory already present, assuming virtualenv already created."
   else
-    echo "venv directory already present, creating..."
-    ./toxw -e create-venv
+    echo "venv directory not found, creating virtualenv via tox..."
+    ./toxw --devenv venv -e tool
   fi
 }
 
