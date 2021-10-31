@@ -34,6 +34,9 @@
 # generate requirements files using pip-compile:
 #   ./build.sh pip-compile
 #
+# update venv from dev-requirements.txt:
+#   ./build.sh pip-sync
+#
 set -ueo pipefail
 
 declare -r SCRIPT_ORIG="$0"
