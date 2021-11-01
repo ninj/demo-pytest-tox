@@ -26,7 +26,7 @@ def ensure_editable_requirements(c):
 
 
 @task(pre=[ensure_editable_requirements])
-def pip_sync(c, args=""):
+def update_requirements(c, args=""):
     """
     update virtual env from requirements files
 

@@ -13,7 +13,7 @@ SUMMARY
   development virtual environment.
 
 USAGE
-  bootstrap.sh
+  bootstrap.sh [-?|-h|--help]
 
 DESCRIPTION
   - if virtualenv not active:
@@ -42,16 +42,16 @@ ensure_venv() {
   fi
 }
 
-ensure_dev_dependencies() {
+ensure_venv_tools() {
   if ! which pip-sync >/dev/null 2>&1; then
     log "bootstrapping venv dependencies"
     pip install -r dev-requirements.txt
   fi
 }
 
-pip_sync() {
+update_venv_requirements() {
   log "syncing venv dependencies"
-  invoke pip-sync
+  invoke update-requirements
 }
 
 main() {
@@ -63,8 +63,8 @@ main() {
   esac
   cd "$SCRIPT_DIR"
   ensure_venv
-  ensure_dev_dependencies
-  pip_sync
+  ensure_venv_tools
+  update_venv_requirements
 }
 
 main "$@"
