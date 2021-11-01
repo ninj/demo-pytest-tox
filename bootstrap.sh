@@ -60,10 +60,14 @@ main() {
   esac
   cd "$SCRIPT_DIR"
   ensure_venv
-  #ensure_editable_requirements
-  log "updating venv dependencies"
-  #pip-sync editable-requirements.txt dev-requirements.txt
-  pip-sync dev-requirements.txt
+  ensure_editable_requirements
+  if which pip-sync >/dev/null 2>&1; then
+    log "syncing venv dependencies"
+    pip-sync editable-requirements.txt dev-requirements.txt
+  else
+    log "installing venv dependencies"
+    pip install -r editable-requirements.txt -r dev-requirements.txt
+  fi
 }
 
 main "$@"

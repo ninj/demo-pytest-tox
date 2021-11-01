@@ -8,12 +8,24 @@ astroid==2.8.4
     # via pylint
 attrs==21.2.0
     # via pytest
+backports.entry-points-selectable==1.1.0
+    # via virtualenv
+distlib==0.3.3
+    # via virtualenv
+filelock==3.3.2
+    # via
+    #   tox
+    #   virtualenv
 importlib-metadata==4.8.1
     # via
     #   pluggy
     #   pytest
+    #   tox
+    #   virtualenv
 iniconfig==1.1.1
     # via pytest
+invoke==1.6.0
+    # via -r dev-requirements.in
 isort==5.9.3
     # via pylint
 lazy-object-proxy==1.6.0
@@ -23,23 +35,38 @@ mccabe==0.6.1
 mock==4.0.3
     # via -r dev-requirements.in
 packaging==21.2
-    # via pytest
+    # via
+    #   pytest
+    #   tox
 platformdirs==2.4.0
-    # via pylint
+    # via
+    #   pylint
+    #   virtualenv
 pluggy==1.0.0
-    # via pytest
+    # via
+    #   pytest
+    #   tox
 py==1.10.0
-    # via pytest
+    # via
+    #   pytest
+    #   tox
 pylint==2.11.1
     # via -r dev-requirements.in
 pyparsing==2.4.7
     # via packaging
 pytest==6.2.5
     # via -r dev-requirements.in
+six==1.16.0
+    # via
+    #   tox
+    #   virtualenv
 toml==0.10.2
     # via
     #   pylint
     #   pytest
+    #   tox
+tox==3.24.4
+    # via -r dev-requirements.in
 typed-ast==1.4.3
     # via astroid
 typing-extensions==3.10.0.2
@@ -47,6 +74,8 @@ typing-extensions==3.10.0.2
     #   astroid
     #   importlib-metadata
     #   pylint
+virtualenv==20.9.0
+    # via tox
 wrapt==1.13.3
     # via astroid
 zipp==3.6.0
