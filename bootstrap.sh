@@ -42,13 +42,16 @@ ensure_venv() {
   fi
 }
 
-ensure_editable_requirements() {
-  if [[ -f editable-requirements.txt ]]; then
-    log "editable-requirements.txt already present"
-  else
-    log "editable-requirements.txt not found, generating"
-    pip-compile --output-file editable-requirements.txt editable-requirements.in
+ensure_dev_dependencies() {
+  if ! which pip-sync >/dev/null 2>&1; then
+    log "bootstrapping venv dependencies"
+    pip install -r dev-requirements.txt
   fi
+}
+
+pip_sync() {
+  log "syncing venv dependencies"
+  invoke pip-sync
 }
 
 main() {
@@ -60,14 +63,8 @@ main() {
   esac
   cd "$SCRIPT_DIR"
   ensure_venv
-  ensure_editable_requirements
-  if which pip-sync >/dev/null 2>&1; then
-    log "syncing venv dependencies"
-    pip-sync editable-requirements.txt dev-requirements.txt
-  else
-    log "installing venv dependencies"
-    pip install -r editable-requirements.txt -r dev-requirements.txt
-  fi
+  ensure_dev_dependencies
+  pip_sync
 }
 
 main "$@"

@@ -1,11 +1,13 @@
 from invoke import task
 from invoke.context import Context
+from os import path
 
 
 @task
 def pip_compile(c, args=""):
     """
     generate requirements.txt and dev-requirements.txt
+
     :param Context c:
         task context
     :param str args:
@@ -17,9 +19,17 @@ def pip_compile(c, args=""):
 
 
 @task
+def ensure_editable_requirements(c):
+    if not path.exists("editable-requirements.txt"):
+        c.run("pip-compile --output-file editable-requirements.txt "
+              "editable-requirements.in")
+
+
+@task(pre=[ensure_editable_requirements])
 def pip_sync(c, args=""):
     """
     update virtual env from requirements files
+
     :param Context c:
         task context
     :param str args:
@@ -33,6 +43,7 @@ def pip_sync(c, args=""):
 def lint(c, args=""):
     """
     lint code
+
     :param c: Context
     :param str args: extra args for pylint
     :return:
@@ -41,6 +52,6 @@ def lint(c, args=""):
 
 
 @task
-def test(c, args=None):
+def test(c, args=""):
     """run tests"""
     c.run("tox " + args)
