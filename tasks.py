@@ -47,6 +47,18 @@ def update_requirements(c, args=""):
 
 
 @task
+def isort(c, args=""):
+    """
+    sort imports in python code
+
+    :param Context c:
+    :param args: extra args to pass to isort
+    :return:
+    """
+    c.run("isort --src src tests " + args)
+
+
+@task
 def lint(c, args=""):
     """
     lint code

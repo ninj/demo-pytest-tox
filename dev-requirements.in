@@ -3,5 +3,6 @@
 invoke
 tox
 pylint
+isort
 pytest
 mock

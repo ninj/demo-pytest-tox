@@ -27,7 +27,9 @@ iniconfig==1.1.1
 invoke==1.6.0
     # via -r dev-requirements.in
 isort==5.9.3
-    # via pylint
+    # via
+    #   -r dev-requirements.in
+    #   pylint
 lazy-object-proxy==1.6.0
     # via astroid
 mccabe==0.6.1
