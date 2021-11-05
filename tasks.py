@@ -1,6 +1,7 @@
+from os import path
+
 from invoke import task
 from invoke.context import Context
-from os import path
 
 
 @task
@@ -20,6 +21,12 @@ def pip_compile(c, args=""):
 
 @task
 def ensure_editable_requirements(c):
+    """
+    generate editable-requirements.txt, if missing.
+
+    :param Context c:
+    :return:
+    """
     if not path.exists("editable-requirements.txt"):
         c.run("pip-compile --output-file editable-requirements.txt "
               "editable-requirements.in")
