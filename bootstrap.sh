@@ -49,9 +49,9 @@ ensure_venv_tools() {
   fi
 }
 
-update_venv_requirements() {
-  log "updating venv dependencies"
-  invoke update-requirements
+install_venv_requirements() {
+  log "installing requirements for venv"
+  invoke install-requirements
 }
 
 main() {
@@ -64,7 +64,7 @@ main() {
   cd "$SCRIPT_DIR"
   ensure_venv
   ensure_venv_tools
-  update_venv_requirements
+  install_venv_requirements
 }
 
 main "$@"

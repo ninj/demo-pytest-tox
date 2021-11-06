@@ -39,9 +39,9 @@ def generate_requirements(c, args=""):
 
 
 @task(pre=[ensure_editable_requirements])
-def update_requirements(c, args=""):
+def install_requirements(c, args=""):
     """
-    update virtual env from requirements files
+    install requirements for virtual env
 
     :param Context c:
         task context
@@ -121,7 +121,7 @@ def test(c, args=""):
     c.run("tox " + args)
 
 
-@task(pre=[generate_requirements, update_requirements, code_checks, test])
+@task(pre=[generate_requirements, install_requirements, code_checks, test])
 def assemble(c):
     """
     assemble project
