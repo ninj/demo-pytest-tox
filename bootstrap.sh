@@ -50,7 +50,7 @@ ensure_venv_tools() {
 }
 
 update_venv_requirements() {
-  log "syncing venv dependencies"
+  log "updating venv dependencies"
   invoke update-requirements
 }
 

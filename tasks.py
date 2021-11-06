@@ -118,9 +118,9 @@ def test(c, args=""):
 
 
 @task(pre=[generate_requirements, update_requirements, code_checks, test])
-def build(c):
+def assemble(c):
     """
-    full build
+    assemble project
 
     :param Context c: task context
     :return:

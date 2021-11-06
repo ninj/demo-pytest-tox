@@ -41,33 +41,17 @@ set -ueo pipefail
 
 declare -r SCRIPT_ORIG="$0"
 declare -r SCRIPT_NAME="${0##*/}"
-declare -r PROJECT_DIR="${0%/*}"
-
-init() {
-  cat <<__INIT__
-$(TOXW_INIT=1 ./toxw)
-__INIT__
-}
-
-goal_init() {
-  cat <<__OUTPUT__
-# run with: eval "\$($SCRIPT_ORIG init)"
-$(init)
-__OUTPUT__
-}
 
 is_virtualenv() {
   [[ -n "${VIRTUAL_ENV:-}" ]]
 }
 
 goal_bootstrap() {
-  ./toxw --version >/dev/null
   ./bootstrap.sh
 }
 
 goal_doctor() {
   cat <<__DOCTOR__
-pipx: $(which pipx || echo "no pipx, install docs: https://pypa.github.io/pipx/installation/")
 virtualenv: $(is_virtualenv && echo "$VIRTUAL_ENV" || echo "no virtualenv detected. Use './bootstrap.sh' to create and 'source venv/bin/activate' to activate")
 python: $(which python)
 python version: $(python --version)
@@ -75,15 +59,8 @@ __DOCTOR__
 }
 
 goal_assemble() {
-  ./toxw
-}
-
-goal_pip_compile() {
-  ./toxw -e pip-compile
-}
-
-goal_pip_sync() {
-  pip-sync dev-requirements.txt
+  goal_bootstrap
+  invoke assemble
 }
 
 help() {
@@ -110,12 +87,7 @@ main() {
     help
     exit
     ;;
-  init)
-    goal_init
-    return $?
-    ;;
   esac
-  eval "$(init)"
   if (($# == 0)); then
     goals=(assemble)
   else
