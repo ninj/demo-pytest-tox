@@ -4,5 +4,6 @@ invoke
 tox
 pylint
 isort
+black
 pytest
 mock
