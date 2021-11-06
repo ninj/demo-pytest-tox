@@ -12,14 +12,26 @@ backports.entry-points-selectable==1.1.0
     # via virtualenv
 black==21.10b0
     # via -r dev-requirements.in
+certifi==2021.10.8
+    # via requests
+charset-normalizer==2.0.7
+    # via requests
 click==8.0.3
     # via black
 distlib==0.3.3
     # via virtualenv
+docutils==0.18
+    # via flit
 filelock==3.3.2
     # via
     #   tox
     #   virtualenv
+flit==3.4.0
+    # via -r dev-requirements.in
+flit-core==3.4.0
+    # via flit
+idna==3.3
+    # via requests
 importlib-metadata==4.8.1
     # via
     #   click
@@ -70,6 +82,8 @@ pytest==6.2.5
     # via -r dev-requirements.in
 regex==2021.11.2
     # via black
+requests==2.26.0
+    # via flit
 six==1.16.0
     # via
     #   tox
@@ -80,7 +94,12 @@ toml==0.10.2
     #   pytest
     #   tox
 tomli==1.2.2
-    # via black
+    # via
+    #   black
+    #   flit
+    #   flit-core
+tomli-w==0.4.0
+    # via flit
 tox==3.24.4
     # via -r dev-requirements.in
 typed-ast==1.4.3
@@ -93,6 +112,8 @@ typing-extensions==3.10.0.2
     #   black
     #   importlib-metadata
     #   pylint
+urllib3==1.26.7
+    # via requests
 virtualenv==20.9.0
     # via tox
 wrapt==1.13.3

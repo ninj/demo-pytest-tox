@@ -1,6 +1,7 @@
 -c requirements.txt
 
 invoke
+flit
 tox
 pylint
 isort
