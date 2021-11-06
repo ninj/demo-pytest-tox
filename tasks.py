@@ -24,7 +24,7 @@ def ensure_editable_requirements(c):
 
 
 @task(pre=[ensure_editable_requirements])
-def generate_requirements(c, args=""):
+def update_requirements(c, args=""):
     """
     generate requirements.txt and dev-requirements.txt
 
@@ -121,7 +121,7 @@ def test(c, args=""):
     c.run("tox " + args)
 
 
-@task(pre=[generate_requirements, install_requirements, code_checks, test])
+@task(pre=[install_requirements, code_checks, test])
 def assemble(c):
     """
     assemble project
