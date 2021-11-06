@@ -20,8 +20,7 @@ def ensure_editable_requirements(c):
         )
 
 
-@task(help={'args': 'extra args for pip-compile'},
-      pre=[ensure_editable_requirements])
+@task(help={"args": "extra args for pip-compile"}, pre=[ensure_editable_requirements])
 def update_requirements(c, args=""):
     """
     generate requirements.txt and dev-requirements.txt
@@ -30,9 +29,13 @@ def update_requirements(c, args=""):
     c.run("pip-compile dev-requirements.in " + args)
 
 
-@task(help={'args': 'extra args for pip-sync',
-            'dry-run': 'pass --dry-run to pip-sync to only show actions'},
-      pre=[ensure_editable_requirements])
+@task(
+    help={
+        "args": "extra args for pip-sync",
+        "dry-run": "pass --dry-run to pip-sync to only show actions",
+    },
+    pre=[ensure_editable_requirements],
+)
 def install_requirements(c, dry_run=False, args=""):
     """
     install requirements for virtual env
@@ -42,25 +45,29 @@ def install_requirements(c, dry_run=False, args=""):
     c.run("pip-sync editable-requirements.txt dev-requirements.txt " + args)
 
 
-@task(help={'args': 'extra args for isort'})
-def isort(c, args=""):
+@task(help={"args": "extra args for isort", "check": "enable check only"})
+def isort(c, check=False, args=""):
     """
     sort imports in python code
     """
+    if check:
+        args = "--check " + args
     c.run("isort src tests tasks.py " + args)
 
 
-@task(help={'args': 'extra args for black'})
-def black(c, args=""):
+@task(help={"args": "extra args for black", "check": "enable check only"})
+def black(c, check=False, args=""):
     """
     reformat code to PEP-8
     see: https://learn.adafruit.com/improve-your-code-with-pylint/black
     remember: '# fmt: off' and '# fmt: on' to control formatting zones.
     """
+    if check:
+        args = "--check " + args
     c.run("black src tests tasks.py " + args)
 
 
-@task(help={'args': 'extra args for pylint'})
+@task(help={"args": "extra args for pylint"})
 def lint(c, args=""):
     """
     lint code
@@ -76,14 +83,14 @@ def code_format(c):
     """
 
 
-@task(pre=[call(isort, args="--check"), call(black, args="--check"), lint])
+@task(pre=[call(isort, check=True), call(black, check=True), lint])
 def code_checks(c):
     """
     run code checks
     """
 
 
-@task(help={'args': 'extra args for tox'})
+@task(help={"args": "extra args for tox"})
 def test(c, args=""):
     """
     run tests
