@@ -1,6 +1,10 @@
+# pylint: disable=invalid-name, unused-import, unused-argument
+"""
+pyinvoke tasks definition
+"""
 from os import path
 
-from invoke import task, call
+from invoke import call, task
 from invoke.context import Context
 
 
@@ -13,8 +17,10 @@ def ensure_editable_requirements(c):
     :return:
     """
     if not path.exists("editable-requirements.txt"):
-        c.run("pip-compile --output-file editable-requirements.txt "
-              "editable-requirements.in")
+        c.run(
+            "pip-compile --output-file editable-requirements.txt "
+            "editable-requirements.in"
+        )
 
 
 @task(pre=[ensure_editable_requirements])
@@ -55,7 +61,7 @@ def isort(c, args=""):
     :param args: extra args to pass to isort
     :return:
     """
-    c.run("isort --src src tests " + args)
+    c.run("isort src tests tasks.py " + args)
 
 
 @task
@@ -69,7 +75,7 @@ def black(c, args=""):
     :param str args: extra args to pass to black
     :return:
     """
-    c.run("black src tests " + args)
+    c.run("black src tests tasks.py " + args)
 
 
 @task
@@ -81,7 +87,7 @@ def lint(c, args=""):
     :param str args: extra args for pylint
     :return:
     """
-    c.run("pylint src tests " + args)
+    c.run("pylint src tests tasks.py " + args)
 
 
 @task(pre=[call(isort), call(black), lint])
@@ -92,10 +98,9 @@ def code_format(c):
     :param Context c: task context
     :return:
     """
-    pass
 
 
-@task(pre=[call(isort, args='--check'), call(black, args='--check'), lint])
+@task(pre=[call(isort, args="--check"), call(black, args="--check"), lint])
 def code_checks(c):
     """
     run code checks
@@ -103,7 +108,6 @@ def code_checks(c):
     :param Context c: task context
     :return:
     """
-    pass
 
 
 @task
@@ -125,4 +129,3 @@ def assemble(c):
     :param Context c: task context
     :return:
     """
-    pass
