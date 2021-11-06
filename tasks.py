@@ -90,11 +90,15 @@ def code_check(c):
     """
 
 
-@task(help={"args": "extra args for tox"})
-def test(c, args=""):
+@task(
+    help={"args": "extra args for tox", "recreate": "pass -r to tox to recreate venvs"}
+)
+def test(c, recreate=False, args=""):
     """
-    run tests
+    run tests via tox
     """
+    if recreate:
+        args = "-r " + args
     c.run("tox " + args)
 
 
