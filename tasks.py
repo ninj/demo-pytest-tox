@@ -39,16 +39,20 @@ def update_requirements(c, args=""):
 
 
 @task(pre=[ensure_editable_requirements])
-def install_requirements(c, args=""):
+def install_requirements(c, dry_run=False, args=""):
     """
     install requirements for virtual env
 
     :param Context c:
         task context
+    :param bool dry_run:
+        pip sync should show actions, rather than executing them
     :param str args:
         extra args for pip-sync
     :return:
     """
+    if dry_run:
+        args = "--dry-run " + args
     c.run("pip-sync editable-requirements.txt dev-requirements.txt " + args)
 
 
