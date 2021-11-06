@@ -12,9 +12,6 @@ from invoke.context import Context
 def ensure_editable_requirements(c):
     """
     generate editable-requirements.txt, if missing.
-
-    :param Context c:
-    :return:
     """
     if not path.exists("editable-requirements.txt"):
         c.run(
@@ -23,73 +20,50 @@ def ensure_editable_requirements(c):
         )
 
 
-@task(pre=[ensure_editable_requirements])
+@task(help={'args': 'extra args for pip-compile'},
+      pre=[ensure_editable_requirements])
 def update_requirements(c, args=""):
     """
     generate requirements.txt and dev-requirements.txt
-
-    :param Context c:
-        task context
-    :param str args:
-        extra args for pip-compile
-    :return:
     """
     c.run("pip-compile requirements.in " + args)
     c.run("pip-compile dev-requirements.in " + args)
 
 
-@task(pre=[ensure_editable_requirements])
+@task(help={'args': 'extra args for pip-sync',
+            'dry-run': 'pass --dry-run to pip-sync to only show actions'},
+      pre=[ensure_editable_requirements])
 def install_requirements(c, dry_run=False, args=""):
     """
     install requirements for virtual env
-
-    :param Context c:
-        task context
-    :param bool dry_run:
-        pip sync should show actions, rather than executing them
-    :param str args:
-        extra args for pip-sync
-    :return:
     """
     if dry_run:
         args = "--dry-run " + args
     c.run("pip-sync editable-requirements.txt dev-requirements.txt " + args)
 
 
-@task
+@task(help={'args': 'extra args for isort'})
 def isort(c, args=""):
     """
     sort imports in python code
-
-    :param Context c:
-    :param args: extra args to pass to isort
-    :return:
     """
     c.run("isort src tests tasks.py " + args)
 
 
-@task
+@task(help={'args': 'extra args for black'})
 def black(c, args=""):
     """
     reformat code to PEP-8
     see: https://learn.adafruit.com/improve-your-code-with-pylint/black
     remember: '# fmt: off' and '# fmt: on' to control formatting zones.
-
-    :param Context c: task context
-    :param str args: extra args to pass to black
-    :return:
     """
     c.run("black src tests tasks.py " + args)
 
 
-@task
+@task(help={'args': 'extra args for pylint'})
 def lint(c, args=""):
     """
     lint code
-
-    :param Context c:
-    :param str args: extra args for pylint
-    :return:
     """
     c.run("pylint src tests tasks.py " + args)
 
@@ -98,8 +72,6 @@ def lint(c, args=""):
 def code_format(c):
     """
     run code formatters and call linter to check results
-
-    :param Context c: task context
     :return:
     """
 
@@ -108,19 +80,13 @@ def code_format(c):
 def code_checks(c):
     """
     run code checks
-
-    :param Context c: task context
-    :return:
     """
 
 
-@task
+@task(help={'args': 'extra args for tox'})
 def test(c, args=""):
     """
     run tests
-
-    :param Context c:
-    :param str args: extra args for tox
     """
     c.run("tox " + args)
 
