@@ -84,7 +84,7 @@ def code_format(c):
 
 
 @task(pre=[call(isort, check=True), call(black, check=True), lint])
-def code_checks(c):
+def code_check(c):
     """
     run code checks
     """
@@ -98,7 +98,7 @@ def test(c, args=""):
     c.run("tox " + args)
 
 
-@task(pre=[install_requirements, code_checks, test])
+@task(pre=[install_requirements, code_check, test])
 def assemble(c):
     """
     assemble project
