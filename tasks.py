@@ -109,7 +109,6 @@ def assemble(c, recreate=False, args=""):
     """
     assemble project
     """
-    opts = ""
     if recreate:
         args = f"-r {args}"
     c.run(f"tox {args} -e clean")
