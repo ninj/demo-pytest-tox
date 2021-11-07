@@ -104,5 +104,4 @@ def assemble(c, recreate=False, args=""):
     c.run(f"tox {args} -e package")
 
 
-if not os.environ["PIP_REQUIRE_VIRTUALENV"]:
-    os.environ["PIP_REQUIRE_VIRTUALENV"] = "true"
+os.environ.setdefault("PIP_REQUIRE_VIRTUALENV", "true")
