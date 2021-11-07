@@ -20,7 +20,7 @@ def ensure_editable_requirements(c):
 
 
 @task(help={"args": "extra args for pip-compile"}, pre=[ensure_editable_requirements])
-def update_requirements(c, args=""):
+def update_requirements(c, args="--upgrade"):
     """
     generate requirements.txt and dev-requirements.txt
     """
