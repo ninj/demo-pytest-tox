@@ -97,13 +97,21 @@ def test(c, recreate=False, args=""):
     run tests via tox
     """
     if recreate:
-        args = "-r {args}"
-    c.run("tox {args}")
+        args = f"-r {args}"
+    c.run(f"tox {args}")
 
 
-@task(pre=[code_check, test], help={"args": "extra args for tox"})
-def assemble(c, args=""):
+@task(
+    pre=[code_check, test],
+    help={"args": "extra args for tox", "recreate": "pass -r to tox to recreate venvs"},
+)
+def assemble(c, recreate=False, args=""):
     """
     assemble project
     """
+    opts = ""
+    if recreate:
+        args = f"-r {args}"
+    c.run(f"tox {args} -e clean")
+    c.run(f"tox {args}")
     c.run(f"tox {args} -e package")

@@ -16,3 +16,15 @@ def test_exit():
                 app.init()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 42
+
+
+def test_main(capsys):
+    """
+    main method
+
+    :param capsys: capture io
+    :return:
+    """
+    app.main()
+    captured = capsys.readouterr()
+    assert captured.out == "Hello World!\n"

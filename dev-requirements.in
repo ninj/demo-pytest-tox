@@ -7,5 +7,5 @@ pylint
 isort
 black
 pytest
+pytest-cov
 mock
-pex
