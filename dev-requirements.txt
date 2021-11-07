@@ -43,7 +43,7 @@ iniconfig==1.1.1
     # via pytest
 invoke==1.6.0
     # via -r dev-requirements.in
-isort==5.9.3
+isort==5.10.0
     # via
     #   -r dev-requirements.in
     #   pylint
@@ -72,7 +72,7 @@ pluggy==1.0.0
     # via
     #   pytest
     #   tox
-py==1.10.0
+py==1.11.0
     # via
     #   pytest
     #   tox
@@ -116,7 +116,7 @@ typing-extensions==3.10.0.2
     #   pylint
 urllib3==1.26.7
     # via requests
-virtualenv==20.9.0
+virtualenv==20.10.0
     # via tox
 wrapt==1.13.3
     # via astroid

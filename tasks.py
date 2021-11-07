@@ -24,8 +24,8 @@ def update_requirements(c, args=""):
     """
     generate requirements.txt and dev-requirements.txt
     """
-    c.run("pip-compile requirements.in " + args)
-    c.run("pip-compile dev-requirements.in " + args)
+    c.run(f"pip-compile {args} requirements.in")
+    c.run(f"pip-compile {args} dev-requirements.in")
 
 
 @task(
@@ -40,8 +40,8 @@ def install_requirements(c, dry_run=False, args=""):
     install requirements for virtual env
     """
     if dry_run:
-        args = "--dry-run " + args
-    c.run("pip-sync editable-requirements.txt dev-requirements.txt " + args)
+        args = f"--dry-run {args}"
+    c.run(f"pip-sync {args} editable-requirements.txt dev-requirements.txt ")
 
 
 @task(help={"args": "extra args for isort", "check": "enable check only"})
@@ -50,8 +50,8 @@ def isort(c, check=False, args=""):
     sort imports in python code
     """
     if check:
-        args = "--check " + args
-    c.run("isort . " + args)
+        args = f"--check {args}"
+    c.run(f"isort . {args}")
 
 
 @task(help={"args": "extra args for black", "check": "enable check only"})
@@ -62,8 +62,8 @@ def black(c, check=False, args=""):
     remember: '# fmt: off' and '# fmt: on' to control formatting zones.
     """
     if check:
-        args = "--check " + args
-    c.run("black " + args + " .")
+        args = f"--check {args}"
+    c.run(f"black {args} .")
 
 
 @task(help={"args": "extra args for pylint"})
@@ -71,7 +71,7 @@ def lint(c, args=""):
     """
     lint code
     """
-    c.run("pylint src tests tasks.py " + args)
+    c.run(f"pylint src tests tasks.py {args}")
 
 
 @task(pre=[call(isort), call(black), lint])
@@ -97,13 +97,13 @@ def test(c, recreate=False, args=""):
     run tests via tox
     """
     if recreate:
-        args = "-r " + args
-    c.run("tox " + args)
+        args = "-r {args}"
+    c.run("tox {args}")
 
 
-@task(pre=[code_check, test])
-def assemble(c):
+@task(pre=[code_check, test], help={"args": "extra args for tox"})
+def assemble(c, args=""):
     """
     assemble project
     """
-    c.run("tox -e package")
+    c.run(f"tox {args} -e package")
