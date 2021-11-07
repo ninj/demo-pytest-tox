@@ -37,6 +37,9 @@
 
 Note that Black uses a line length of 88 characters, so you might need to change your IDE settings to match.
 
+For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Guides` to `88`. 
+
+
 ## Usage
 
 - to set up developer environment, run `./bootstrap.sh` to:
