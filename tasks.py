@@ -8,7 +8,7 @@ from invoke import call, task
 
 
 @task
-def ensure_editable_requirements(c):
+def editable_requirements(c):
     """
     generate editable-requirements.txt, if missing.
     """
@@ -19,8 +19,8 @@ def ensure_editable_requirements(c):
         )
 
 
-@task(help={"args": "extra args for pip-compile"}, pre=[ensure_editable_requirements])
-def update_requirements(c, args="--upgrade"):
+@task(help={"args": "extra args for pip-compile"}, pre=[editable_requirements])
+def requirements_update(c, args="--upgrade"):
     """
     generate requirements.txt and dev-requirements.txt
     """
@@ -33,9 +33,9 @@ def update_requirements(c, args="--upgrade"):
         "args": "extra args for pip-sync",
         "dry-run": "pass --dry-run to pip-sync to only show actions",
     },
-    pre=[ensure_editable_requirements],
+    pre=[editable_requirements],
 )
-def install_requirements(c, dry_run=False, args=""):
+def requirements_install(c, dry_run=False, args=""):
     """
     install requirements for virtual env
     """

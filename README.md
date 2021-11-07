@@ -56,10 +56,10 @@ For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Gu
 
 - list tasks with `inv -l`
 - set up completion with `source <(inv print-completion-script bash)` (replace `bash` with `zsh` as appropriate)
-- `inv update-requirements` will call `pip-compile` to:
+- `inv requirements-update` will call `pip-compile` to:
     - generate `requirements.txt` from `requirements.in`
     - generate `dev-requirements.txt` from `dev-requirements.in`
-- `inv install-requirements` will install requirements into `venv` (with `pip-sync`)
+- `inv requirements-install` will install requirements into `venv` (with `pip-sync`)
 - `inv code-check` will run code checks
 - `inv code-format` will reformat code
 - `inv test` will run tests via `tox` for multiple python versions.

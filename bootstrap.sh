@@ -51,7 +51,7 @@ ensure_venv_tools() {
 
 install_venv_requirements() {
   log "installing requirements for venv"
-  invoke install-requirements
+  invoke requirements-install
 }
 
 main() {
