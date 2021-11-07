@@ -52,7 +52,7 @@ def isort(c, check=False, args=""):
     """
     if check:
         args = "--check " + args
-    c.run("isort src tests tasks.py " + args)
+    c.run("isort . " + args)
 
 
 @task(help={"args": "extra args for black", "check": "enable check only"})
