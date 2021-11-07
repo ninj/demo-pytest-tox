@@ -30,6 +30,7 @@
 
 ## Features
 
+- dependency resolution with `pip-compile`
 - code formatting with `isort` and `black`
 - linting with `pylint`
 - tests with `pytest`
