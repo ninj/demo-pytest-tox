@@ -98,6 +98,7 @@ def test(c, recreate=False, args=""):
     """
     if recreate:
         args = f"-r {args}"
+    c.run(f"tox {args} -e clean")
     c.run(f"tox {args}")
 
 
@@ -111,6 +112,5 @@ def assemble(c, recreate=False, args=""):
     """
     if recreate:
         args = f"-r {args}"
-    c.run(f"tox {args} -e clean")
-    c.run(f"tox {args}")
+    test(c, recreate=recreate, args=args)
     c.run(f"tox {args} -e package")
