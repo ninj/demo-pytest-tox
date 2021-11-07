@@ -2,24 +2,13 @@
 """
 pyinvoke tasks definition
 """
-from os import path
+
+import os
 
 from invoke import call, task
 
 
-@task
-def editable_requirements(c):
-    """
-    generate editable-requirements.txt, if missing.
-    """
-    if not path.exists("editable-requirements.txt"):
-        c.run(
-            "pip-compile --output-file editable-requirements.txt "
-            "editable-requirements.in"
-        )
-
-
-@task(help={"args": "extra args for pip-compile"}, pre=[editable_requirements])
+@task(help={"args": "extra args for pip-compile"})
 def requirements_update(c, args="--upgrade"):
     """
     generate requirements.txt and dev-requirements.txt
@@ -32,8 +21,7 @@ def requirements_update(c, args="--upgrade"):
     help={
         "args": "extra args for pip-sync",
         "dry-run": "pass --dry-run to pip-sync to only show actions",
-    },
-    pre=[editable_requirements],
+    }
 )
 def requirements_install(c, dry_run=False, args=""):
     """
@@ -41,7 +29,7 @@ def requirements_install(c, dry_run=False, args=""):
     """
     if dry_run:
         args = f"--dry-run {args}"
-    c.run(f"pip-sync {args} editable-requirements.txt dev-requirements.txt ")
+    c.run(f"pip-sync {args} dev-requirements.txt ")
 
 
 @task(help={"args": "extra args for isort", "check": "enable check only"})
@@ -114,3 +102,7 @@ def assemble(c, recreate=False, args=""):
         args = f"-r {args}"
     test(c, recreate=recreate, args=args)
     c.run(f"tox {args} -e package")
+
+
+if not os.environ["PIP_REQUIRE_VIRTUALENV"]:
+    os.environ["PIP_REQUIRE_VIRTUALENV"] = "true"

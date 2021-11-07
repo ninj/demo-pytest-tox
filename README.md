@@ -64,4 +64,6 @@ For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Gu
 - `inv code-format` will reformat code
 - `inv test` will run tests via `tox` for multiple python versions.
 
-Note that `pip` keeps re-installing editable modules - think that has to do with the way `pip` handles editable modules.
+Notes:
+- `pip` keeps re-installing editable modules - think that has to do with the way `pip` handles editable modules.
+- pyinvoke isn't compatible with python 3.10 at the moment.

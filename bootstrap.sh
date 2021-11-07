@@ -4,6 +4,7 @@ set -ueo pipefail
 
 declare -r SCRIPT_DIR="${0%/*}"
 declare -r VENV_DIR="${VENV_DIR:-venv}" # relative to SCRIPT_DIR or full path
+export PIP_REQUIRE_VIRTUALENV="${PIP_REQUIRE_VIRTUALENV:-true}"
 
 print_help() {
   cat <<__HELP__
@@ -42,6 +43,10 @@ ensure_venv() {
   fi
 }
 
+ensure_venv_pip() {
+  pip install --upgrade pip==21.3.1
+}
+
 ensure_venv_tools() {
   if ! which pip-sync >/dev/null 2>&1; then
     log "bootstrapping venv dependencies"
@@ -63,6 +68,7 @@ main() {
   esac
   cd "$SCRIPT_DIR"
   ensure_venv
+  ensure_venv_pip
   ensure_venv_tools
   install_venv_requirements
 }

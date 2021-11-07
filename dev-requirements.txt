@@ -17,7 +17,9 @@ certifi==2021.10.8
 charset-normalizer==2.0.7
     # via requests
 click==8.0.3
-    # via black
+    # via
+    #   black
+    #   pip-tools
 coverage[toml]==6.1.1
     # via pytest-cov
 distlib==0.3.3
@@ -37,6 +39,7 @@ idna==3.3
 importlib-metadata==4.8.1
     # via
     #   click
+    #   pep517
     #   pluggy
     #   pytest
     #   tox
@@ -63,6 +66,10 @@ packaging==21.2
     #   tox
 pathspec==0.9.0
     # via black
+pep517==0.12.0
+    # via pip-tools
+pip-tools==6.4.0
+    # via -r dev-requirements.in
 platformdirs==2.4.0
     # via
     #   black
@@ -105,6 +112,7 @@ tomli==1.2.2
     #   coverage
     #   flit
     #   flit-core
+    #   pep517
 tomli-w==0.4.0
     # via flit
 tox==3.24.4
@@ -123,10 +131,15 @@ urllib3==1.26.7
     # via requests
 virtualenv==20.10.0
     # via tox
+wheel==0.37.0
+    # via pip-tools
 wrapt==1.13.3
     # via astroid
 zipp==3.6.0
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools

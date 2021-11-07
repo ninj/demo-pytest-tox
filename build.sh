@@ -39,7 +39,9 @@ __DOCTOR__
 }
 
 goal_assemble() {
-  goal_bootstrap
+  if ! is_virtualenv; then
+    source venv/bin/activate
+  fi
   invoke assemble
 }
 
@@ -55,7 +57,7 @@ main() {
     ;;
   esac
   if (($# == 0)); then
-    goals=(assemble)
+    goals=(bootstrap assemble)
   else
     goals=("$@")
   fi

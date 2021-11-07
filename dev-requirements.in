@@ -2,6 +2,7 @@
 
 invoke
 flit
+pip-tools
 tox
 pylint
 isort
