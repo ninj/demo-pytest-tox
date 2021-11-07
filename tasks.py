@@ -64,7 +64,7 @@ def black(c, check=False, args=""):
     """
     if check:
         args = "--check " + args
-    c.run("black src tests tasks.py " + args)
+    c.run("black " + args + " .")
 
 
 @task(help={"args": "extra args for pylint"})
