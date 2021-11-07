@@ -102,7 +102,7 @@ def test(c, recreate=False, args=""):
     c.run("tox " + args)
 
 
-@task(pre=[install_requirements, code_check, test])
+@task(pre=[code_check, test])
 def assemble(c):
     """
     assemble project
