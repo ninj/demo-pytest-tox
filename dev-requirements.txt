@@ -61,6 +61,8 @@ packaging==21.2
     #   tox
 pathspec==0.9.0
     # via black
+pex==2.1.54
+    # via -r dev-requirements.in
 platformdirs==2.4.0
     # via
     #   black

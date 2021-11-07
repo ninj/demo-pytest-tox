@@ -1,11 +1,10 @@
-# pylint: disable=invalid-name, unused-import, unused-argument
+# pylint: disable=invalid-name, unused-argument
 """
 pyinvoke tasks definition
 """
 from os import path
 
 from invoke import call, task
-from invoke.context import Context
 
 
 @task
@@ -106,7 +105,5 @@ def test(c, recreate=False, args=""):
 def assemble(c):
     """
     assemble project
-
-    :param Context c: task context
-    :return:
     """
+    c.run("tox -e package")
