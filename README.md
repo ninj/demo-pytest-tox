@@ -8,6 +8,13 @@
 - For maintaining pyenv with brew python
   versions: https://stackoverflow.com/questions/30499795/how-can-i-make-homebrews-python-and-pyenv-live-together
 
+## Goals
+
+- only need to call `build.sh` to build project.
+- developer only needs to call `bootstrap.sh` to set up local environment.
+  - assumes required python versions already available in path.
+- developer can import project into IntelliJ and run project.
+
 ## Structure
 
 - `./` - created by IntelliJ New Project
