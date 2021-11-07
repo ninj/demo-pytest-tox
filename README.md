@@ -37,8 +37,7 @@
 
 Note that Black uses a line length of 88 characters, so you might need to change your IDE settings to match.
 
-For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Guides` to `88`. 
-
+For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Guides` to `88`.
 
 ## Usage
 
@@ -51,6 +50,8 @@ For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Gu
     - also calls `bootstrap.sh`, so easily used in something like restabuild.
     - runs QA checks, so badly formatted code will fail build.
 - other tasks can be run via `invoke` (which is installed along with dev requirements.)
+- because project is installed as editable into virtual environment, IntelliJ/PyCharm should auto-detect src directory
+  as a source root. This allows the IDE to recognise the app module, e.g. in tests.
 
 ### `invoke`
 
@@ -65,5 +66,6 @@ For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Gu
 - `inv test` will run tests via `tox` for multiple python versions.
 
 Notes:
+
 - `pip` keeps re-installing editable modules - think that has to do with the way `pip` handles editable modules.
 - pyinvoke isn't compatible with python 3.10 at the moment.
