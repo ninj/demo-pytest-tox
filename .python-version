@@ -1,4 +1,5 @@
-3.10-brew
-3.9-brew
-3.8-brew
+# note that invoke doesn't like 3.10 at the moment
 3.7-brew
+3.8-brew
+3.9-brew
+3.10-brew
