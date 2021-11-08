@@ -80,7 +80,6 @@ def lint(c, args=""):
 def code_format(c):
     """
     run code formatters only
-    :return:
     """
 
 
