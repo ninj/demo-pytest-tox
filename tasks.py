@@ -77,7 +77,7 @@ def lint(c, args=""):
 
 
 @task(pre=[call(isort), call(black)])
-def code_format(c, lint=False):
+def code_format(c):
     """
     run code formatters only
     :return:
