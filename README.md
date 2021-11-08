@@ -121,3 +121,11 @@ Why some things were chosen.
 - has no other dependencies.
 - provides convenient help, arg parsing.
 - also provides completion scripts.
+
+### pylint exceptions
+
+- tasks.py disables:
+  - `invalid-name` as method parameter names dictate command line argument names.
+  - `unused-argument` as pyinvoke requires a context argument for all @task methods.
+- tests disable:
+  - `missing-function-docstring` as test method definitions usually self-descriptive.
