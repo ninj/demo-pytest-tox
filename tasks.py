@@ -76,10 +76,10 @@ def lint(c, args=""):
     c.run(f"pylint src tests tasks.py {args}")
 
 
-@task(pre=[call(isort), call(black), lint])
-def code_format(c):
+@task(pre=[call(isort), call(black)])
+def code_format(c, lint=False):
     """
-    run code formatters and call linter to check results
+    run code formatters only
     :return:
     """
 
