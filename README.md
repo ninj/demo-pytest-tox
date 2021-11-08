@@ -12,7 +12,7 @@
 
 - only need to call `build.sh` to build project.
 - developer only needs to call `bootstrap.sh` to set up local environment.
-  - assumes required python versions already available in path.
+    - assumes required python versions already available in path.
 - developer can import project into IntelliJ and run project.
 
 ## Structure
@@ -76,3 +76,48 @@ Notes:
 
 - `pip` keeps re-installing editable modules - think that has to do with the way `pip` handles editable modules.
 - pyinvoke isn't compatible with python 3.10 at the moment.
+
+## Development Decisions
+
+Why some things were chosen.
+
+### tools in venv
+
+- Although it is possible to call tools through a wrapper to provide an automatic venv, the convention appears to be
+  that if a project needs a tool, then it should be installed into the venv for the project.
+- Tried using tox through pipx, but this caused an issue when tox was attempting to manage the venv that was also
+  currently in use. (Potentially this is a problem anyway, but tox was definitely very confused.)
+- Also an issue using pipx for a tool if it also needs dependent packages - this means relocating the install that pipx
+  creates into the project-specific directory so we can inject the other packages required. Potentially could use a hash
+  of the extra packages (and versions), but generally speaking is a bit too complex compare to the benefits of being
+  able to "just use" the tool.
+- There is a general problem where if a tool in a tool-specific venv needs to also call another dependency/tool then that also needs to be installed so the first tool can find the second tool.
+
+### tox to manage tools
+
+- although it is tempting to use tox to run tools, there are complications around:
+  - venv management: the extra config in tox.ini might be confusing
+- extra output from tox when running tool (unless you use -q?)
+- adding extra config to tox would distract from it's purpose for testing with multiple versions of python.
+
+### src layout for project
+
+- src/ layout prevents subtle problems during testing where extra .py files in project directory.
+- tox runs tests by installing project, so can handles as installed module.
+
+### installing project as editable module
+
+- extra steps / artifacts required for using project as editable (`editable-requirements*`)
+- but IntelliJ/PyCharm need project to be installed into venv so that src/ directory is automatically picked up.
+
+### pip-tools to manage requirements
+
+- pip-compile allows us to specify top-level inside `*requirements.in` files, and it calculates appropriate versions for both direct and transitive dependencies.
+- otherwise hard to know which are the direct dependencies and transitive dependencies.
+- pip-sync helps remove unwanted dependencies as well as install required dependencies.
+
+### invoke for project tasks
+
+- has no other dependencies.
+- provides convenient help, arg parsing.
+- also provides completion scripts.
