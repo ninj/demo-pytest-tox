@@ -9,7 +9,7 @@ from invoke import call, task
 
 
 @task(help={"args": "extra args for pip-compile"})
-def requirements_update(c, args="--upgrade"):
+def requirements_compile(c, args="--upgrade"):
     """
     generate requirements.txt and dev-requirements.txt
     """
@@ -30,6 +30,20 @@ def requirements_install(c, dry_run=False, args=""):
     if dry_run:
         args = f"--dry-run {args}"
     c.run(f"pip-sync {args} dev-requirements.txt ")
+
+
+@task(
+    help={
+        "compile_args": "extra args for pip-compile",
+        "install_args": "extra args for pip-sync",
+    }
+)
+def requirements_update(c, compile_args="--upgrade", install_args=""):
+    """
+    generate requirements and install them
+    """
+    requirements_compile(c, args=compile_args)
+    requirements_install(c, args=install_args)
 
 
 @task(help={"args": "extra args for isort", "check": "enable check only"})
