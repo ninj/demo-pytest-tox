@@ -1,6 +1,13 @@
 # pylint: disable=invalid-name, unused-argument
 """
 pyinvoke tasks definition
+
+The following have been disabled from pylint:
+- invalid-name     as method parameter names dictate command line argument names
+- unused-argument  as pyinvoke requires a context argument for all @task methods
+
+Also, parameters are not documented in method docstrings as the docstrings are output
+as part of task help.
 """
 
 import os
