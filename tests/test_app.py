@@ -1,4 +1,6 @@
 """tests for app"""
+# pylint: disable=missing-function-docstring
+
 import mock
 import pytest
 
@@ -19,12 +21,6 @@ def test_exit():
 
 
 def test_main(capsys):
-    """
-    main method
-
-    :param capsys: capture io
-    :return:
-    """
     app.main()
     captured = capsys.readouterr()
     assert captured.out == "Hello World!\n"
