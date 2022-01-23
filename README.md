@@ -41,10 +41,10 @@
 - code formatting with `isort` and `black`
 - linting with `pylint`
 - tests with `pytest`
+- `editorconfig` to set line length to 88 characters in IDE.
 
-Note that Black uses a line length of 88 characters, so you might need to change your IDE settings to match.
-
-For Intellij, `Editor > Code Style > Python` > set `Hard Wrap At` and `Visual Guides` to `88`.
+Note that Black uses a line length of 88 characters, so you might need to change your IDE settings to match if not
+compatible with [editorconfig](https://editorconfig.org/).
 
 ## Usage
 
@@ -91,12 +91,13 @@ Why some things were chosen.
   creates into the project-specific directory so we can inject the other packages required. Potentially could use a hash
   of the extra packages (and versions), but generally speaking is a bit too complex compare to the benefits of being
   able to "just use" the tool.
-- There is a general problem where if a tool in a tool-specific venv needs to also call another dependency/tool then that also needs to be installed so the first tool can find the second tool.
+- There is a general problem where if a tool in a tool-specific venv needs to also call another dependency/tool then
+  that also needs to be installed so the first tool can find the second tool.
 
 ### tox to manage tools
 
 - although it is tempting to use tox to run tools, there are complications around:
-  - venv management: the extra config in tox.ini might be confusing
+    - venv management: the extra config in tox.ini might be confusing
 - extra output from tox when running tool (unless you use -q?)
 - adding extra config to tox would distract from it's purpose for testing with multiple versions of python.
 
@@ -112,7 +113,8 @@ Why some things were chosen.
 
 ### pip-tools to manage requirements
 
-- pip-compile allows us to specify top-level inside `*requirements.in` files, and it calculates appropriate versions for both direct and transitive dependencies.
+- pip-compile allows us to specify top-level inside `*requirements.in` files, and it calculates appropriate versions for
+  both direct and transitive dependencies.
 - otherwise hard to know which are the direct dependencies and transitive dependencies.
 - pip-sync helps remove unwanted dependencies as well as install required dependencies.
 
@@ -125,7 +127,7 @@ Why some things were chosen.
 ### pylint exceptions
 
 - tasks.py disables:
-  - `invalid-name` as method parameter names dictate command line argument names.
-  - `unused-argument` as pyinvoke requires a context argument for all @task methods.
+    - `invalid-name` as method parameter names dictate command line argument names.
+    - `unused-argument` as pyinvoke requires a context argument for all @task methods.
 - tests disable:
-  - `missing-function-docstring` as test method definitions usually self-descriptive.
+    - `missing-function-docstring` as test method definitions usually self-descriptive.
