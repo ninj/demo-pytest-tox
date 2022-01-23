@@ -9,6 +9,7 @@ isort
 black
 pytest
 pytest-cov
+coverage[toml]
 mock
 mypy
 types-mock

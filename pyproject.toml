@@ -15,3 +15,6 @@ profile = "black"
 [tool.mypy]
 pretty = true
 files = "src,tests"
+
+[tool.coverage.run]
+source = ["app"]

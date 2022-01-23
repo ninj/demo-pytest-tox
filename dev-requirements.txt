@@ -19,7 +19,9 @@ click==8.0.3
     #   black
     #   pip-tools
 coverage[toml]==6.2
-    # via pytest-cov
+    # via
+    #   -r dev-requirements.in
+    #   pytest-cov
 distlib==0.3.4
     # via virtualenv
 docutils==0.18.1
