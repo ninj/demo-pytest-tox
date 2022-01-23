@@ -11,3 +11,7 @@ dynamic = ["version", "description"]
 [tool.isort]
 # from https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html
 profile = "black"
+
+[tool.mypy]
+pretty = true
+files = "src,tests"

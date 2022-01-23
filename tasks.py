@@ -83,6 +83,14 @@ def lint(c, args=""):
     c.run(f"pylint src tests tasks.py {args}")
 
 
+@task(help={"args": "extra args for mypy"})
+def mypy(c, args=""):
+    """
+    check type hints in code
+    """
+    c.run(f"mypy {args}")
+
+
 @task(pre=[call(isort), call(black)])
 def code_format(c):
     """
@@ -90,7 +98,7 @@ def code_format(c):
     """
 
 
-@task(pre=[call(isort, check=True), call(black, check=True), lint])
+@task(pre=[call(isort, check=True), call(black, check=True), mypy, lint])
 def code_check(c):
     """
     run code checks

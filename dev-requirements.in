@@ -10,3 +10,5 @@ black
 pytest
 pytest-cov
 mock
+mypy
+types-mock

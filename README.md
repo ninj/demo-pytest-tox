@@ -42,6 +42,7 @@
 - linting with `pylint`
 - tests with `pytest`
 - `editorconfig` to set line length to 88 characters in IDE.
+- type hinting with `mypy`
 
 Note that Black uses a line length of 88 characters, so you might need to change your IDE settings to match if not
 compatible with [editorconfig](https://editorconfig.org/).
