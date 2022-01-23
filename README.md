@@ -67,6 +67,7 @@ compatible with [editorconfig](https://editorconfig.org/).
 - `inv requirements-update` will call `pip-compile` to:
     - generate `requirements.txt` from `requirements.in`
     - generate `dev-requirements.txt` from `dev-requirements.in`
+    - also installs requirements.
 - `inv requirements-install` will install requirements into `venv` (with `pip-sync`)
 - `inv code-check` will run code checks
 - `inv code-format` will reformat code
