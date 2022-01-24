@@ -22,6 +22,7 @@ def requirements_compile(c, args="--upgrade"):
     """
     c.run(f"pip-compile {args} requirements.in")
     c.run(f"pip-compile {args} dev-requirements.in")
+    c.run(f"pip-compile {args} editable-requirements.in")
 
 
 @task(
@@ -36,7 +37,7 @@ def requirements_install(c, dry_run=False, args=""):
     """
     if dry_run:
         args = f"--dry-run {args}"
-    c.run(f"pip-sync {args} dev-requirements.txt ")
+    c.run(f"pip-sync {args} editable-requirements.txt dev-requirements.txt")
 
 
 @task(
@@ -91,7 +92,30 @@ def mypy(c, args=""):
     c.run(f"mypy {args}")
 
 
-@task(pre=[call(isort), call(black)])
+@task(help={"args": "extra args for monkeytype"})
+def monkeytype_run(c, args=""):
+    """
+    generate call traces for type hinting by running pytest
+    """
+    c.run(f"monkeytype {args} run -m pytest")
+
+
+@task(help={"args": "extra args for monkeytype"})
+def monkeytype_apply(c, args=""):
+    """
+    rewrite source files to include type hints
+    """
+    c.run(f"monkeytype {args} apply app")
+
+
+@task(pre=[monkeytype_run, monkeytype_apply])
+def monkeytype(c):
+    """
+    generate and apply type hints with monkeytype
+    """
+
+
+@task(pre=[call(isort), call(monkeytype), call(black)])
 def code_format(c):
     """
     run code formatters only

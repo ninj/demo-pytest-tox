@@ -5,12 +5,12 @@ __version__ = "0.0.1"
 import sys
 
 
-def main():
+def main() -> object:
     """main entry point"""
-    print("Hello World!")
+    return print("Hello World!")
 
 
-def init():
+def init() -> None:
     """load logic for module"""
     if __name__ == "__main__":
         sys.exit(main())

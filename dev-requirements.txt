@@ -54,16 +54,22 @@ isort==5.10.1
     #   pylint
 lazy-object-proxy==1.7.1
     # via astroid
+libcst==0.4.0
+    # via monkeytype
 mccabe==0.6.1
     # via pylint
 mock==4.0.3
+    # via -r dev-requirements.in
+monkeytype==21.5.0
     # via -r dev-requirements.in
 mypy==0.931
     # via -r dev-requirements.in
 mypy-extensions==0.4.3
     # via
     #   black
+    #   monkeytype
     #   mypy
+    #   typing-inspect
 packaging==21.3
     # via
     #   pytest
@@ -97,6 +103,8 @@ pytest==6.2.5
     #   pytest-cov
 pytest-cov==3.0.0
     # via -r dev-requirements.in
+pyyaml==6.0
+    # via libcst
 requests==2.27.1
     # via flit
 six==1.16.0
@@ -131,8 +139,12 @@ typing-extensions==4.0.1
     #   astroid
     #   black
     #   importlib-metadata
+    #   libcst
     #   mypy
     #   pylint
+    #   typing-inspect
+typing-inspect==0.7.1
+    # via libcst
 urllib3==1.26.8
     # via requests
 virtualenv==20.13.0
