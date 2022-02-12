@@ -146,7 +146,7 @@ def test(c, recreate=False, args=""):
     pre=[code_check, test],
     help={"args": "extra args for tox", "recreate": "pass -r to tox to recreate venvs"},
 )
-def assemble(c, recreate=False, args=""):
+def build(c, recreate=False, args=""):
     """
     assemble project
     """

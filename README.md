@@ -73,6 +73,7 @@ compatible with [editorconfig](https://editorconfig.org/).
 - `inv code-check` will run code checks
 - `inv code-format` will reformat code
 - `inv test` will run tests via `tox` for multiple python versions.
+- `inv build` will perform the main build.
 
 Notes:
 

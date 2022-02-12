@@ -2,9 +2,10 @@
 
 set -ueo pipefail
 
+declare -r PIP_VERSION=21.3.1
+
 declare -r SCRIPT_DIR="${0%/*}"
 declare -r VENV_DIR="${VENV_DIR:-venv}" # relative to SCRIPT_DIR or full path
-export PIP_REQUIRE_VIRTUALENV="${PIP_REQUIRE_VIRTUALENV:-true}"
 
 print_help() {
   cat <<__HELP__
@@ -18,44 +19,47 @@ USAGE
 
 DESCRIPTION
   - if virtualenv not active:
-    - if not found, creates venv directory
-    - activates venv
+    - if not found, creates venv
+  - installs dev-requirements
   - updates pip packages in virtualenv
 __HELP__
 }
 
 log() {
-  echo "$@"
+  echo ">>" "$@"
 }
 
 ensure_venv() {
   if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-    log "active virtualenv detected: $VIRTUAL_ENV"
+    log "virtualenv: already active: $VIRTUAL_ENV"
   else
-    log "no active virtualenv detected"
-    if [[ ! -d "$VENV_DIR" ]]; then
-      log "creating virtualenv at: $VENV_DIR"
+    log "virtualenv: not active"
+    if [[ -d "$VENV_DIR" ]]; then
+      log "virtualenv: existing at: $VENV_DIR"
+    else
+      log "virtualenv: creating at: $VENV_DIR"
       python3 -m venv "$VENV_DIR"
     fi
-    log "attempting to activate $VENV_DIR"
-    # shellcheck disable=SC1090
-    source "$VENV_DIR/bin/activate"
+    export PATH="$VENV_DIR/bin:$PATH"
   fi
 }
 
 ensure_venv_pip() {
-  pip install --upgrade pip==21.3.1
+  log "pip: want $PIP_VERSION"
+  pip install --upgrade pip=="$PIP_VERSION"
 }
 
-ensure_venv_tools() {
-  if ! which pip-sync >/dev/null 2>&1; then
-    log "bootstrapping venv dependencies"
+bootstrap_dev_requirements() {
+  if which inv >/dev/null 2>&1; then
+    log "dev-requirements: already present"
+  else
+    log "dev-requirements: bootstrapping..."
     pip install -r dev-requirements.txt
   fi
 }
 
-install_venv_requirements() {
-  log "installing requirements for venv"
+install_requirements() {
+  log "requirements: installing..."
   invoke requirements-install
 }
 
@@ -69,8 +73,8 @@ main() {
   cd "$SCRIPT_DIR"
   ensure_venv
   ensure_venv_pip
-  ensure_venv_tools
-  install_venv_requirements
+  bootstrap_dev_requirements
+  install_requirements
 }
 
 main "$@"
